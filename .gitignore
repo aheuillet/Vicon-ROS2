@@ -1,0 +1,9 @@
+build/*
+
+#Ignore GXX build files
+*.so
+*.o
+*.hxx
+
+#Ignore CMake build folder
+src/nexus_interface/_build/*

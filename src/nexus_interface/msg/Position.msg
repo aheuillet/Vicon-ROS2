@@ -1,0 +1,1 @@
+uint8[] left_arm_positions
