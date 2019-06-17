@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-string GetParam(string config_file, string identifier);
+std::string GetParam(std::string config_file, std::string identifier);
 
 
 #endif // UTILS_HPP

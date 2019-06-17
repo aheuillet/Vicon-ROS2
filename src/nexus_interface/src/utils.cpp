@@ -2,7 +2,6 @@
 
 using namespace std;
 
-
 string GetParam(string config_file, string identifier){
     size_t found;
     ifstream cFile (config_file);

@@ -1,8 +1,10 @@
 #include "../../DataStreamSDK/DataStreamClient.h"
-#include "utils.cpp"
+#include "utils.hpp"
 #include <iostream>
 #include <list>
 #include <csignal>
+#include <string>
+#include <cstdio>
 
 using namespace ViconDataStreamSDK::CPP;
 
@@ -22,10 +24,10 @@ void KeyboardInterruptHandler(int s)
 int main()
 {
     //Getting parameters from config file
-    string hostname = GetParam("../settings.cfg", "localhost");
+    std::string hostname = GetParam("../settings.cfg", "hostname");
     int buffer_size = std::stoi(GetParam("../settings.cfg", "buffer_size").c_str());
     int camera_index = std::stoi(GetParam("../settings.cfg", "camera_index").c_str());
-    int subject_demo = std::stoi(GetParam("../settings.cfg", "subject_demo").c_str());
+    int subject_index = std::stoi(GetParam("../settings.cfg", "subject_index").c_str());
 
     Client MyClient;
     std::list<Position> Positions;
@@ -33,9 +35,9 @@ int main()
     Output_GetDeviceCount GDC;
     Output_GetDeviceName GDN;
     Position CurrentPosition;
-    string device_name;
-    string device_type;
-    Output_Connect Output = MyClient.Connect("localhost");
+    std::string device_name;
+    std::string device_type;
+    Output_Connect Output = MyClient.Connect(hostname.c_str());
     if (Output.Result != Result::Success)
     {
         std::cerr << "Error: Could not connect to compatible DataStream server, exiting now..." << std::endl;
@@ -47,9 +49,9 @@ int main()
 
     MyClient.SetBufferSize(2);
     MyClient.SetStreamMode(StreamMode::ClientPull);
-    Output_GetSubjectName GSN = MyClient.GetSubjectName(0);
+    Output_GetSubjectName GSN = MyClient.GetSubjectName(subject_index);
     String subject_name = GSN.SubjectName;
-    Output_GetCameraName GCN = MyClient.GetCameraName(0);
+    Output_GetCameraName GCN = MyClient.GetCameraName(camera_index);
 
     //Installing a SIGINT signal handler to interrupt loop
     struct sigaction sigIntHandler;
@@ -74,7 +76,7 @@ int main()
            GDN = MyClient.GetDeviceName(i);
            device_name = GDN.DeviceName;
            device_type = GDN.DeviceType;
-           std::cout << "Device Index: " + to_string(i) + " Device Name: " + device_name + " Device Type: " + device_type;
+           std::cout << "Device Index: " + std::to_string(i) + " Device Name: " + device_name + " Device Type: " + device_type;
         }
         
 

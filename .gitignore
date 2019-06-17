@@ -6,4 +6,4 @@ build/*
 *.hxx
 
 #Ignore CMake build folder
-src/nexus_interface/_build/*
+src/nexus_interface/build/*
