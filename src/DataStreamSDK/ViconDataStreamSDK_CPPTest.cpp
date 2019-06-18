@@ -40,6 +40,28 @@ namespace
     return i_Value ? "True" : "False";
   }
 
+  std::string Adapt( const TimecodeStandard::Enum i_Standard )
+  {
+    switch( i_Standard )
+    {
+      default:
+    case TimecodeStandard::None:
+        return "0";
+    case TimecodeStandard::PAL:
+        return "1";
+    case TimecodeStandard::NTSC:
+        return "2";
+    case TimecodeStandard::NTSCDrop:
+        return "3";
+    case TimecodeStandard::Film:
+        return "4";
+    case TimecodeStandard::NTSCFilm:
+        return "5";
+    case TimecodeStandard::ATSC:
+        return "6";
+    }
+  }
+
   std::string Adapt( const Direction::Enum i_Direction )
   {
     switch( i_Direction )
@@ -189,6 +211,8 @@ int main( int argc, char* argv[] )
   bool EnableHapticTest = false;
   bool bReadCentroids = false;
   bool bReadRayData = false;
+  bool bReadGreyscaleData = false;
+  bool bReadVideoData = false;
 
   std::vector<std::string> HapticOnList(0);
   unsigned int ClientBufferSize = 0;
@@ -253,6 +277,18 @@ int main( int argc, char* argv[] )
     {
       bReadRayData = true;
     }
+    else if (arg == "--greyscale")
+    {
+      bReadGreyscaleData = true;
+      bReadCentroids = true;
+      output_stream << "Enabling greyscale data also enables centroid output" << std::endl;
+    }
+    else if (arg == "--video")
+    {
+      bReadVideoData = true;
+      bReadCentroids = true;
+      output_stream << "Enabling video data also enables centroid output" << std::endl;
+    }
     else if( arg == "--client-buffer-size" )
     {
       ++a;
@@ -297,7 +333,7 @@ int main( int argc, char* argv[] )
     }
   }
   // Make a new client
-  Client MyClient;
+  ViconDataStreamSDK::CPP::Client MyClient;
 
   for(int i=0; i != 3; ++i) // repeat to check disconnecting doesn't wreck next connect
   {
@@ -348,6 +384,14 @@ int main( int argc, char* argv[] )
     {
       MyClient.EnableMarkerRayData();
     }
+    if (bReadGreyscaleData)
+    {
+      MyClient.EnableGreyscaleData();
+    }
+    if (bReadVideoData)
+    {
+      MyClient.EnableVideoData();
+    }
 
     std::cout << "Segment Data Enabled: "          << Adapt( MyClient.IsSegmentDataEnabled().Enabled )         << std::endl;
     std::cout << "Marker Data Enabled: "           << Adapt( MyClient.IsMarkerDataEnabled().Enabled )          << std::endl;
@@ -355,6 +399,10 @@ int main( int argc, char* argv[] )
     std::cout << "Device Data Enabled: "           << Adapt( MyClient.IsDeviceDataEnabled().Enabled )          << std::endl;
     std::cout << "Centroid Data Enabled: "         << Adapt( MyClient.IsCentroidDataEnabled().Enabled )        << std::endl;
     std::cout << "Marker Ray Data Enabled: "       << Adapt( MyClient.IsMarkerRayDataEnabled().Enabled )       << std::endl;
+    std::cout << "Centroid Data Enabled: "         << Adapt( MyClient.IsCentroidDataEnabled().Enabled)         << std::endl;
+    std::cout << "Greyscale Data Enabled: "        << Adapt( MyClient.IsGreyscaleDataEnabled().Enabled)        << std::endl;
+    std::cout << "Video Data Enabled: "            << Adapt( MyClient.IsVideoDataEnabled().Enabled)            << std::endl;
+    std::cout << "Debug Data Enabled: "            << Adapt( MyClient.IsDebugDataEnabled().Enabled)            << std::endl;
 
     // Set the streaming mode
     //MyClient.SetStreamMode( ViconDataStreamSDK::CPP::StreamMode::ClientPull );
@@ -448,34 +496,6 @@ int main( int argc, char* argv[] )
       Output_GetFrameNumber _Output_GetFrameNumber = MyClient.GetFrameNumber();
       output_stream << "Frame Number: " << _Output_GetFrameNumber.FrameNumber << std::endl;
 
-      if( EnableHapticTest == true )
-      {
-        for (size_t i = 0; i < HapticOnList.size(); ++ i)
-        {
-          if( Counter % 2 == 0 )
-          {
-              Output_SetApexDeviceFeedback Output= MyClient.SetApexDeviceFeedback( HapticOnList[i],  true ); 
-              if( Output.Result == Result::Success )
-              {
-                output_stream<< "Turn haptic feedback on for device: " << HapticOnList[i]<<std::endl;
-              }
-              else if( Output.Result == Result::InvalidDeviceName )
-              {
-                output_stream<< "Device doesn't exist: "<< HapticOnList[i]<<std::endl;
-              }
-          }
-          if( Counter % 20 == 0 )
-          {
-              Output_SetApexDeviceFeedback Output = MyClient.SetApexDeviceFeedback( HapticOnList[i],  false); 
-
-              if( Output.Result == Result::Success )
-              {
-                output_stream<< "Turn haptic feedback off for device: " << HapticOnList[i]<<std::endl;
-              }
-          }
-        }
-      }
-
       Output_GetFrameRate Rate = MyClient.GetFrameRate();
       std::cout << "Frame rate: "           << Rate.FrameRateHz          << std::endl;
 
@@ -499,7 +519,7 @@ int main( int argc, char* argv[] )
                 << _Output_GetTimecode.Frames              << "f "
                 << _Output_GetTimecode.SubFrame            << "sf "
                 << Adapt( _Output_GetTimecode.FieldFlag ) << " " 
-                << _Output_GetTimecode.Standard            << " " 
+                << Adapt( _Output_GetTimecode.Standard )  << " " 
                 << _Output_GetTimecode.SubFramesPerFrame   << " " 
                 << _Output_GetTimecode.UserBits            << std::endl << std::endl;
 
@@ -518,7 +538,33 @@ int main( int argc, char* argv[] )
       Output_GetHardwareFrameNumber _Output_GetHardwareFrameNumber = MyClient.GetHardwareFrameNumber();
       output_stream << "Hardware Frame Number: " << _Output_GetHardwareFrameNumber.HardwareFrameNumber << std::endl;
 
+      if (EnableHapticTest == true)
+      {
+        for (size_t h = 0; h < HapticOnList.size(); ++h)
+        {
+          if (Counter % 2 == 0)
+          {
+            Output_SetApexDeviceFeedback Output = MyClient.SetApexDeviceFeedback(HapticOnList[h], true);
+            if (Output.Result == Result::Success)
+            {
+              output_stream << "Turn haptic feedback on for device: " << HapticOnList[h] << std::endl;
+            }
+            else if (Output.Result == Result::InvalidDeviceName)
+            {
+              output_stream << "Device doesn't exist: " << HapticOnList[h] << std::endl;
+            }
+          }
+          if (Counter % 20 == 0)
+          {
+            Output_SetApexDeviceFeedback Output = MyClient.SetApexDeviceFeedback(HapticOnList[h], false);
 
+            if (Output.Result == Result::Success)
+            {
+              output_stream << "Turn haptic feedback off for device: " << HapticOnList[h] << std::endl;
+            }
+          }
+        }
+      }
 
       // Count the number of subjects
       unsigned int SubjectCount = MyClient.GetSubjectCount().SubjectCount;
@@ -761,6 +807,21 @@ int main( int argc, char* argv[] )
                                       << _Output_GetUnlabeledMarkerGlobalTranslation.Translation[ 2 ] << ")" << std::endl;
       }
 
+      // Get the labeled markers
+      unsigned int LabeledMarkerCount = MyClient.GetLabeledMarkerCount().MarkerCount;
+      output_stream << "    Labeled Markers (" << LabeledMarkerCount << "):" << std::endl;
+      for (unsigned int LabeledMarkerIndex = 0; LabeledMarkerIndex < LabeledMarkerCount; ++LabeledMarkerIndex)
+      {
+        // Get the global marker translation
+        Output_GetLabeledMarkerGlobalTranslation _Output_GetLabeledMarkerGlobalTranslation =
+          MyClient.GetLabeledMarkerGlobalTranslation(LabeledMarkerIndex);
+
+        output_stream << "      Marker #" << LabeledMarkerIndex << ": ("
+          << _Output_GetLabeledMarkerGlobalTranslation.Translation[0] << ", "
+          << _Output_GetLabeledMarkerGlobalTranslation.Translation[1] << ", "
+          << _Output_GetLabeledMarkerGlobalTranslation.Translation[2] << ")" << std::endl;
+      }
+
       // Count the number of devices
       unsigned int DeviceCount = MyClient.GetDeviceCount().DeviceCount;
       output_stream << "  Devices (" << DeviceCount << "):" << std::endl;
@@ -877,6 +938,14 @@ int main( int argc, char* argv[] )
           const std::string CameraName = MyClient.GetCameraName( CameraIndex ).CameraName;
           output_stream << "    Name: " << CameraName << std::endl;
 
+          output_stream << "    Id: " << MyClient.GetCameraId(CameraName).CameraId << std::endl;
+          output_stream << "    User Id: " << MyClient.GetCameraUserId(CameraName).CameraUserId << std::endl;
+          output_stream << "    Type: " << MyClient.GetCameraType(CameraName).CameraType << std::endl;
+          output_stream << "    Display Name: " << MyClient.GetCameraDisplayName(CameraName).CameraDisplayName << std::endl;
+          Output_GetCameraResolution _Output_GetCameraResolution = MyClient.GetCameraResolution(CameraName);
+          output_stream << "    Resolution: " << _Output_GetCameraResolution.ResolutionX << " x " << _Output_GetCameraResolution.ResolutionY << std::endl;
+          output_stream << "    Is Video Camera: " << ( MyClient.GetIsVideoCamera(CameraName).IsVideoCamera ? "true":"false" ) << std::endl;
+
           unsigned int CentroidCount = MyClient.GetCentroidCount( CameraName ).CentroidCount;
           output_stream << "    Centroids(" << CentroidCount << "):" << std::endl;
 
@@ -894,6 +963,42 @@ int main( int argc, char* argv[] )
             if( _Output_GetCentroidWeight.Result == Result::Success )
             {
               output_stream << "        Weighting: " << _Output_GetCentroidWeight.Weight << std::endl;
+            }
+          }
+
+          if (bReadGreyscaleData)
+          {
+            unsigned int BlobCount = MyClient.GetGreyscaleBlobCount(CameraName).BlobCount;
+            output_stream << "    Blobs(" << BlobCount << "):" << std::endl;
+            for (unsigned int BlobIndex = 0; BlobIndex < BlobCount; ++BlobIndex)
+            {
+              output_stream << "      Blob #" << BlobIndex << ":" << std::endl;
+
+              Output_GetGreyscaleBlob _Output_GetGreyscaleBlob = MyClient.GetGreyscaleBlob(CameraName, BlobIndex);
+              if (_Output_GetGreyscaleBlob.Result == Result::Success)
+              {
+                // Don't print out the whole blob
+                output_stream << "        # Line Positions X: " << _Output_GetGreyscaleBlob.BlobLinePositionsX.size() << std::endl;
+                output_stream << "        # Line Positions Y: " << _Output_GetGreyscaleBlob.BlobLinePositionsY.size() << std::endl;
+                output_stream << "        # Pixel Values: " << _Output_GetGreyscaleBlob.BlobLinePixelValues.size() << std::endl;
+              }
+            }
+          }
+
+          if (bReadVideoData)
+          {
+            Output_GetVideoFrame _Output_GetVideoFrame = MyClient.GetVideoFrame(CameraName);
+            if (_Output_GetVideoFrame.Result == Result::Success)
+            {
+              output_stream << "    Video Frame:" << std::endl;
+              output_stream << "      Width:" << _Output_GetVideoFrame.m_Width << std::endl;
+              output_stream << "      Height:" << _Output_GetVideoFrame.m_Height << std::endl;
+              output_stream << "      Frame Id:" << _Output_GetVideoFrame.m_FrameID << std::endl;
+              output_stream << "      Format:" << _Output_GetVideoFrame.m_Format << std::endl;
+              if (_Output_GetVideoFrame.m_Data)
+              {
+                output_stream << "      Data:" << _Output_GetVideoFrame.m_Data->size() << " samples" << std::endl;
+              }
             }
           }
         }
@@ -914,7 +1019,15 @@ int main( int argc, char* argv[] )
     }
     if( bReadRayData )
     {
-      bReadRayData = false;
+      MyClient.DisableMarkerRayData();
+    }
+    if (bReadGreyscaleData)
+    {
+      MyClient.DisableGreyscaleData();
+    }
+    if (bReadVideoData)
+    {
+      MyClient.DisableVideoData();
     }
 
     // Disconnect and dispose

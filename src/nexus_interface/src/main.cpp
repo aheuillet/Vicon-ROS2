@@ -38,6 +38,7 @@ int main()
     std::string device_name;
     std::string device_type;
     Output_Connect Output = MyClient.Connect(hostname.c_str());
+    std::cerr << "Result: " + std::to_string(Output.Result) << std::endl;
     if (Output.Result != Result::Success)
     {
         std::cerr << "Error: Could not connect to compatible DataStream server, exiting now..." << std::endl;
