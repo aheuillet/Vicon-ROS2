@@ -6,6 +6,17 @@
   <description>TODO: Package description</description>
   <maintainer email="heuillet@todo.todo">heuillet</maintainer>
   <license>TODO: License declaration</license>
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+
+  <exec_depend>rosidl_default_runtime</exec_depend>
+
+  <build_depend>rclcpp</build_depend>
+  <build_depend>rcutils</build_depend>
+
+  <exec_depend>rclcpp</exec_depend>
+  <exec_depend>rcutils</exec_depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

@@ -8,12 +8,6 @@
 
 using namespace ViconDataStreamSDK::CPP;
 
-struct Position
-{
-    double position_point[2];
-    double radius;
-} typedef Position;
-
 void KeyboardInterruptHandler(int s)
 {
     printf("%d \n", s); //To stop compiler from complaining
@@ -67,19 +61,18 @@ int main()
         CurrentPosition = {*CentroidPosition.CentroidPosition, CentroidPosition.Radius};
         Positions.push_back(CurrentPosition); */
         GDC = MyClient.GetDeviceCount();
-        if (GDC.DeviceCount == 0) 
+        if (GDC.DeviceCount == 0)
         {
             std::cerr << "No device detected on this setup, exiting now" << std::endl;
             exit(1);
         }
         for (size_t i = 0; i < GDC.DeviceCount; i++)
         {
-           GDN = MyClient.GetDeviceName(i);
-           device_name = GDN.DeviceName;
-           device_type = GDN.DeviceType;
-           std::cout << "Device Index: " + std::to_string(i) + " Device Name: " + device_name + " Device Type: " + device_type;
+            GDN = MyClient.GetDeviceName(i);
+            device_name = GDN.DeviceName;
+            device_type = GDN.DeviceType;
+            std::cout << "Device Index: " + std::to_string(i) + " Device Name: " + device_name + " Device Type: " + device_type;
         }
-        
 
         Frame = MyClient.GetFrame();
     }

@@ -1,9 +1,15 @@
-build/*
-
 #Ignore GXX build files
 *.so
 *.o
 *.hxx
 
+#Ignore VSCode files
+.vscode/*
+
 #Ignore CMake build folder
 src/nexus_interface/build/*
+
+#Ignore Colcon build folders
+build/*
+install/*
+log/*

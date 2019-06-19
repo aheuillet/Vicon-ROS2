@@ -1,1 +1,2 @@
-uint8[] left_arm_positions
+uint8[2] position_point
+uint8 radius

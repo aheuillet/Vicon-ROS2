@@ -4,6 +4,12 @@
 #include <iostream>
 #include <fstream>
 
+struct Position
+{
+    double position_point[2];
+    double radius;
+} typedef Position;
+
 std::string GetParam(std::string config_file, std::string identifier);
 
 
