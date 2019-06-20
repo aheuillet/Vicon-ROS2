@@ -18,10 +18,10 @@ void KeyboardInterruptHandler(int s)
 int main()
 {
     //Getting parameters from config file
-    std::string hostname = GetParam("../settings.cfg", "hostname");
-    int buffer_size = std::stoi(GetParam("../settings.cfg", "buffer_size").c_str());
-    int camera_index = std::stoi(GetParam("../settings.cfg", "camera_index").c_str());
-    int subject_index = std::stoi(GetParam("../settings.cfg", "subject_index").c_str());
+    std::string hostname = GetParam("./settings.cfg", "hostname");
+    int buffer_size = std::stoi(GetParam("./settings.cfg", "buffer_size").c_str());
+    int camera_index = std::stoi(GetParam("./settings.cfg", "camera_index").c_str());
+    int subject_index = std::stoi(GetParam("./settings.cfg", "subject_index").c_str());
 
     Client MyClient;
     std::list<Position> Positions;

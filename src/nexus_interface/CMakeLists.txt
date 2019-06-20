@@ -51,5 +51,6 @@ foreach(typesupport_impl ${typesupport_impls})
 endforeach()
 
 install(TARGETS client DESTINATION lib/${PROJECT_NAME})
+install(FILES settings.cfg DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
