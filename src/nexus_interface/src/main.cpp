@@ -8,10 +8,13 @@
 
 using namespace ViconDataStreamSDK::CPP;
 
+Client MyClient;
+
 void KeyboardInterruptHandler(int s)
 {
     printf("%d \n", s); //To stop compiler from complaining
     std::cout << "Exiting now..." << std::endl;
+    MyClient.Disconnect();
     exit(1);
 }
 
@@ -23,7 +26,6 @@ int main()
     int camera_index = std::stoi(GetParam("./settings.cfg", "camera_index").c_str());
     int subject_index = std::stoi(GetParam("./settings.cfg", "subject_index").c_str());
 
-    Client MyClient;
     std::list<Position> Positions;
     Output_GetCentroidPosition CentroidPosition;
     Output_GetDeviceCount GDC;
@@ -38,15 +40,17 @@ int main()
         std::cerr << "Error: Could not connect to compatible DataStream server, exiting now..." << std::endl;
         exit(1);
     }
-    //MyClient.EnableCentroidData();
-    MyClient.EnableDeviceData();
+    MyClient.EnableDebugData();
+    MyClient.EnableGreyscaleData();
     Output_GetFrame Frame = MyClient.GetFrame();
 
-    MyClient.SetBufferSize(2);
+    MyClient.SetBufferSize(buffer_size);
     MyClient.SetStreamMode(StreamMode::ClientPull);
     Output_GetSubjectName GSN = MyClient.GetSubjectName(subject_index);
     String subject_name = GSN.SubjectName;
     Output_GetCameraName GCN = MyClient.GetCameraName(camera_index);
+    std::cout << subject_name << std::endl;
+    std::cout << GCN.CameraName << std::endl;
 
     //Installing a SIGINT signal handler to interrupt loop
     struct sigaction sigIntHandler;
@@ -59,20 +63,11 @@ int main()
     {
         /* CentroidPosition = MyClient.GetCentroidPosition(GCN.CameraName, 0);
         CurrentPosition = {*CentroidPosition.CentroidPosition, CentroidPosition.Radius};
+        std::cout << CurrentPosition.toString() << std::endl;
         Positions.push_back(CurrentPosition); */
-        GDC = MyClient.GetDeviceCount();
-        if (GDC.DeviceCount == 0)
-        {
-            std::cerr << "No device detected on this setup, exiting now" << std::endl;
-            exit(1);
-        }
-        for (size_t i = 0; i < GDC.DeviceCount; i++)
-        {
-            GDN = MyClient.GetDeviceName(i);
-            device_name = GDN.DeviceName;
-            device_type = GDN.DeviceType;
-            std::cout << "Device Index: " + std::to_string(i) + " Device Name: " + device_name + " Device Type: " + device_type;
-        }
+
+        Output_GetGreyscaleBlobCount Output = MyClient.GetGreyscaleBlobCount(GCN.CameraName);
+        std::cout << Output.BlobCount << std::endl;
 
         Frame = MyClient.GetFrame();
     }
