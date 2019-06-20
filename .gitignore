@@ -5,6 +5,6 @@
 src/nexus_interface/build/*
 
 #Ignore Colcon build folders
-build/*
-install/*
-log/*
+src/nexus_interface/build/*
+src/nexus_interface/install/*
+src/nexus_interface/log/*

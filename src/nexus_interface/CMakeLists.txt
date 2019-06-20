@@ -50,6 +50,6 @@ foreach(typesupport_impl ${typesupport_impls})
   )
 endforeach()
 
-install(TARGETS client DESTINATION bin)
+install(TARGETS client DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
