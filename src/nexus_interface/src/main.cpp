@@ -4,7 +4,7 @@
 #include <list>
 #include <csignal>
 #include <string>
-#include <cstdio>
+//#include <cstdio>
 
 using namespace ViconDataStreamSDK::CPP;
 
@@ -12,7 +12,7 @@ Client MyClient;
 
 void KeyboardInterruptHandler(int s)
 {
-    printf("%d \n", s); //To stop compiler from complaining
+    std::cout << s << std::endl; //To stop compiler from complaining
     std::cout << "Exiting now..." << std::endl;
     MyClient.Disconnect();
     exit(1);
@@ -25,6 +25,7 @@ int main()
     int buffer_size = std::stoi(GetParam("./settings.cfg", "buffer_size").c_str());
     int camera_index = std::stoi(GetParam("./settings.cfg", "camera_index").c_str());
     int subject_index = std::stoi(GetParam("./settings.cfg", "subject_index").c_str());
+    std::string topic_name = GetParam("./settings.cfg", "topic");
 
     std::list<Position> Positions;
     Output_GetCentroidPosition CentroidPosition;
@@ -61,13 +62,10 @@ int main()
     sigaction(SIGINT, &sigIntHandler, NULL);
     while (true)
     {
-        /* CentroidPosition = MyClient.GetCentroidPosition(GCN.CameraName, 0);
+        CentroidPosition = MyClient.GetCentroidPosition(GCN.CameraName, 0);
         CurrentPosition = {*CentroidPosition.CentroidPosition, CentroidPosition.Radius};
         std::cout << CurrentPosition.toString() << std::endl;
-        Positions.push_back(CurrentPosition); */
-
-        Output_GetGreyscaleBlobCount Output = MyClient.GetGreyscaleBlobCount(GCN.CameraName);
-        std::cout << Output.BlobCount << std::endl;
+        Positions.push_back(CurrentPosition);
 
         Frame = MyClient.GetFrame();
     }
