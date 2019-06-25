@@ -1,5 +1,7 @@
 # ROS2Vicon
 
+[![Build Status](https://travis-ci.com/aheuillet/Vicon-ROS2.svg?branch=master)](https://travis-ci.com/aheuillet/Vicon-ROS2)
+
 > This C++ program retrieves data from a compatible Vicon software (Nexus, Shogun, Tracker, Blade) and publish it on a ROS2 topic.
 
 ## Requirements
