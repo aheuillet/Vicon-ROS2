@@ -15,6 +15,14 @@ Then, install [Colcon](https://colcon.readthedocs.io/en/released/index.html) and
 
 `sudo apt install python3-colcon-common-extensions && sudo apt install cmake`
 
+You will also need to install wxWidgets in order to build the GUI :
+
+`sudo apt install wx-common wx-headers libwxgtk3.0-dev libwxgtk-media3.0-dev libwxgtk3.0-gtk3-dev`
+
+And :
+
+`sudo ln -sv /usr/include/wx-3.0/wx /usr/include/wx`
+
 ## Quickstart
 
 :warning: Do not forget to source the global ROS2 workspace : `source /opt/ros/dashing/setup.bash`
