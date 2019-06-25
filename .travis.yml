@@ -15,5 +15,5 @@ before_install:
   - sudo apt install cmake
   - sudo sh install.sh
 
-install: cd src/nexus_interface/ && colcon build 
+install: cd src/nexus_interface/ && sudo colcon build 
 
