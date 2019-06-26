@@ -1,35 +1,13 @@
-// wxWidgets "Hello world" Program
-// For compilers that support precompilation, includes "wx/wx.h".
-#include <wx/wx.h>
-
-class MyApp: public wxApp
-{
-public:
-    virtual bool OnInit();
-};
-
-class MyFrame: public wxFrame
-{
-public:
-    MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
-private:
-    void OnStart(wxCommandEvent& event);
-    void OnExit(wxCommandEvent& event);
-    void OnAbout(wxCommandEvent& event);
-    wxDECLARE_EVENT_TABLE();
-};
-
-enum
-{
-    ID_Start = 1, ID_Stop = 2, BUTTON_Start = 3
-};
+#include "gui.hpp"
 
 wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(ID_Start,   MyFrame::OnStart)
     EVT_BUTTON(BUTTON_Start, MyFrame::OnStart)
+    EVT_BUTTON(BUTTON_Stop, MyFrame::OnStop)
     EVT_MENU(wxID_EXIT,  MyFrame::OnExit)
     EVT_MENU(wxID_ABOUT, MyFrame::OnAbout)
 wxEND_EVENT_TABLE()
+
 wxIMPLEMENT_APP(MyApp);
 
 bool MyApp::OnInit()
@@ -42,17 +20,22 @@ bool MyApp::OnInit()
 MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
         : wxFrame(NULL, wxID_ANY, title, pos, size)
 {
-    wxMenu *menuCommand = new wxMenu;
-    wxButton *startButton = new wxButton(this, BUTTON_Start, _T("Start"), wxDefaultPosition, wxDefaultSize, 0);
+    menuCommand = new wxMenu;
+    buttonsSizer = new wxBoxSizer(wxVERTICAL);
+    buttonsSizer->AddStretchSpacer(1);
+    buttonsSizer->Add(new wxButton(this, BUTTON_Start, _T("Start")), 0, wxEXPAND|wxALIGN_LEFT|wxALL);
+    buttonsSizer->Add(new wxButton(this, BUTTON_Stop, _T("Stop")), 0, wxEXPAND|wxALIGN_RIGHT|wxALL);
+    buttonsSizer->AddStretchSpacer(1);
     menuCommand->Append(ID_Start, "&Start\tCtrl-S",
                      "Help string shown in status bar for this menu item");
     menuCommand->AppendSeparator();
     menuCommand->Append(wxID_EXIT);
-    wxMenu *menuHelp = new wxMenu;
+    menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
-    wxMenuBar *menuBar = new wxMenuBar;
+    menuBar = new wxMenuBar;
     menuBar->Append( menuCommand, "&Command" );
     menuBar->Append( menuHelp, "&Help" );
+    SetSizer(buttonsSizer);
     SetMenuBar( menuBar );
     CreateStatusBar();
     SetStatusText( "Welcome to ROS2VICON!" );
@@ -72,4 +55,9 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 void MyFrame::OnStart(wxCommandEvent& event)
 {
     wxLogMessage("Starting streaming to ROS");
+}
+
+void MyFrame::OnStop(wxCommandEvent& event)
+{
+    wxLogMessage("Stopping streaming to ROS");
 }
