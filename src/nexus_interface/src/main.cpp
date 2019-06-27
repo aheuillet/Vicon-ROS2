@@ -18,6 +18,11 @@ void KeyboardInterruptHandler(int s)
     exit(1);
 }
 
+void Log(std::string info, int level) 
+{
+
+}
+
 int main()
 {
     //Getting parameters from config file
@@ -26,6 +31,7 @@ int main()
     int camera_index = std::stoi(GetParam("./settings.cfg", "camera_index").c_str());
     int subject_index = std::stoi(GetParam("./settings.cfg", "subject_index").c_str());
     std::string topic_name = GetParam("./settings.cfg", "topic");
+    std::string log_file = GetParam("./settings.cfg", "log_file");
 
     std::list<Position> Positions;
     Output_GetCentroidPosition CentroidPosition;
