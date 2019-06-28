@@ -210,7 +210,9 @@ void Communicator::Disconnect()
     MyClient.DisableUnlabeledMarkerData();
     MyClient.DisableDeviceData();
     MyClient.DisableCentroidData();
+    Log("Disconnecting from " + hostname + "...", INFO);
     MyClient.Disconnect();
+    Log("Successfully disconnected", INFO);
 }
 
 void Communicator::FrameGetter()
@@ -234,7 +236,43 @@ void Communicator::FrameGetter()
         Output_GetLatencyTotal Latency = MyClient.GetLatencyTotal();
         Log("Latency: " + to_string(Latency.Total), INFO);
 
+        unsigned int CameraCount = MyClient.GetCameraCount().CameraCount;
+        Log("Number of cameras: " + to_string(CameraCount), INFO);
+
+        for (unsigned int CameraIndex = 0; CameraIndex < CameraCount; ++CameraIndex)
+        {
+            const std::string CameraName = MyClient.GetCameraName(CameraIndex).CameraName;
+            unsigned int CentroidCount = MyClient.GetCentroidCount(CameraName).CentroidCount;
+
+            Log("Camera #" + to_string(CameraIndex) + ":" + '\n'
+            + "    Name: " + CameraName + '\n'
+            + "    Type: " + string(MyClient.GetCameraType(CameraName).CameraType) + '\n'
+            + "    Display Name: " + string(MyClient.GetCameraDisplayName(CameraName).CameraDisplayName) + '\n'
+            + "    Is Video Camera: " + (MyClient.GetIsVideoCamera(CameraName).IsVideoCamera ? "true" : "false") + '\n'
+            + "    Centroids(" + to_string(CentroidCount) + "):", INFO);
+
+            for (unsigned int CentroidIndex = 0; CentroidIndex < CentroidCount; ++CentroidIndex)
+            {
+                Output_GetCentroidPosition _Output_GetCentroidPosition = MyClient.GetCentroidPosition(CameraName, CentroidIndex);
+                Log("      Centroid #" + to_string(CentroidIndex) + ":" + '\n'
+                + "        Position: (" + to_string(_Output_GetCentroidPosition.CentroidPosition[0]) + ", "
+                              + to_string(_Output_GetCentroidPosition.CentroidPosition[1]) + ")" + '\n'
+                + "        Radius: (" + to_string(_Output_GetCentroidPosition.Radius) + ")", INFO);
+                CurrentPosition = {*_Output_GetCentroidPosition.CentroidPosition, _Output_GetCentroidPosition.Radius};
+                Positions.push_back(CurrentPosition);
+            }
+        }
     }
+}
+
+bool Communicator::IsConnected() const 
+{
+    return MyClient.IsConnected().Connected;
+}
+
+string Communicator::GetHostName() const 
+{
+    return hostname;
 }
 
 Communicator::~Communicator()

@@ -5,7 +5,6 @@
 #include <fstream>
 #include <string>
 #include <array>
-#include "utils.hpp"
 
 enum {
     INFO=0,
@@ -13,7 +12,7 @@ enum {
     ERROR=2
 };
 
-std::array<std::string, 3> log_types = {std::string("INFO"), std::string("WARNING"), std::string("ERROR")};
+static std::array<std::string, 3> log_types = {std::string("INFO"), std::string("WARNING"), std::string("ERROR")};
 
 inline void Log(std::string logMsg, int level)
 {

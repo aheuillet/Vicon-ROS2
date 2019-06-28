@@ -4,6 +4,7 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(ID_Start,   MyFrame::OnStart)
     EVT_BUTTON(BUTTON_Start, MyFrame::OnStart)
     EVT_BUTTON(BUTTON_Stop, MyFrame::OnStop)
+    EVT_MENU(wxID_PREFERENCES, MyFrame::OnSettings)
     EVT_MENU(wxID_EXIT,  MyFrame::OnExit)
     EVT_MENU(wxID_ABOUT, MyFrame::OnAbout)
 wxEND_EVENT_TABLE()
@@ -29,6 +30,8 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     menuCommand->Append(ID_Start, "&Start\tCtrl-S",
                      "Help string shown in status bar for this menu item");
     menuCommand->AppendSeparator();
+    menuCommand->Append(wxID_PREFERENCES, "&Settings\tCtrl-D", "Allows you to tweak the transmission settings");
+    menuCommand->AppendSeparator();
     menuCommand->Append(wxID_EXIT);
     menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
@@ -38,7 +41,11 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     SetSizer(buttonsSizer);
     SetMenuBar( menuBar );
     CreateStatusBar();
-    SetStatusText( "Welcome to ROS2VICON!" );
+    SetStatusStyles(1, [wxSB_RAISED]);
+    SetStatusText( "Welcome to ROS2VICON! Connecting to server..." );
+    client.Connect();
+    std::string status_msg = "Connected to " + client.GetHostName(); 
+    SetStatusText(status_msg.c_str());
 }
 
 void MyFrame::OnExit(wxCommandEvent& event)
@@ -60,4 +67,11 @@ void MyFrame::OnStart(wxCommandEvent& event)
 void MyFrame::OnStop(wxCommandEvent& event)
 {
     wxLogMessage("Stopping streaming to ROS");
+}
+
+void MyFrame::OnSettings(wxCommandEvent& event) 
+{
+    editor = new wxPreferencesEditor("Settings");
+    editor->AddPage(wxStock)
+
 }

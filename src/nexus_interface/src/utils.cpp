@@ -2,20 +2,25 @@
 
 using namespace std;
 
-string GetParam(string config_file, string identifier){
+list<ConfigLine> GetConfigLines()
+{
     size_t found;
-    ifstream cFile (config_file);
+    list<ConfigLine> ConfigLines;
+    ConfigLine current;
+    ifstream cFile(CONFIG_FILE_LOCATION);
     if (cFile.is_open())
     {
         string line;
-        while(getline(cFile, line)){
+        while (getline(cFile, line))
+        {
             found = line.find(" ");
             if (found != string::npos)
                 line.erase(found, 1);
-            if(line[0] == '#' || line.empty())
+            if (line[0] == '#' || line.empty())
                 continue;
             found = line.find(" ");
-            while(found != string::npos){
+            while (found != string::npos)
+            {
                 line.erase(found, 1);
                 found = line.find(" ");
             }
@@ -25,9 +30,49 @@ string GetParam(string config_file, string identifier){
             found = value.find("\r");
             if (found != string::npos)
                 value.erase(found);
-            if (name.compare(identifier)==0)
-                return value;
+            current.name = name;
+            current.value = value;
+            ConfigLines.push_back(current);
         }
     }
+    else
+    {
+        string msg = "Could not open file, exiting now...";
+        cout << "[ERROR] " + msg << endl;
+        Log(msg, ERROR);
+        exit(1);
+    }
+    cFile.close();
+    return ConfigLines;
+}
+
+string GetParam(string identifier)
+{
+    for (ConfigLine &line : GetConfigLines())
+    {
+        if (line.name.compare(identifier) == 0)
+            return line.value;
+    }
     return string("");
+}
+
+void WriteConfigLines(list<ConfigLine> lines) 
+{
+    ofstream cFile(CONFIG_FILE_LOCATION);
+    string line;
+    if (cFile.is_open()) 
+    {
+        for (ConfigLine & line : lines) 
+        {
+            cFile << line.name + "=" + line.value << endl;
+        }
+    }
+    else
+    {
+        string msg = "Could not open file, exiting now...";
+        cout << "[ERROR] " + msg << endl;
+        Log(msg, ERROR);
+        exit(1);
+    }
+    cFile.close();
 }

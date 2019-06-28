@@ -34,6 +34,7 @@ public:
     void Disconnect();
     bool IsConnected() const;
     void FrameGetter();
+    string GetHostName() const;
     ~Communicator();
 };
 

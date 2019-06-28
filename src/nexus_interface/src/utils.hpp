@@ -1,8 +1,12 @@
 #if !defined(UTILS_HPP)
 #define UTILS_HPP
 #include <string>
+#include <list>
 #include <iostream>
 #include <fstream>
+#include "logging.hpp"
+
+#define CONFIG_FILE_LOCATION "./settings.cfg"
 
 struct Position
 {
@@ -15,7 +19,17 @@ struct Position
     }
 } typedef Position;
 
-std::string GetParam(std::string config_file, std::string identifier);
+struct ConfigLine 
+{
+    std::string name;
+    std::string value; 
+} typedef ConfigLine;
+
+void WriteConfigLines(std::list<ConfigLine> lines);
+
+std::list<ConfigLine> GetConfigLines();
+
+std::string GetParam(std::string identifier);
 
 
 #endif // UTILS_HPP

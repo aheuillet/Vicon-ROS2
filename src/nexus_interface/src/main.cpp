@@ -4,7 +4,6 @@
 #include <list>
 #include <csignal>
 #include <string>
-//#include <cstdio>
 
 using namespace ViconDataStreamSDK::CPP;
 
@@ -18,20 +17,15 @@ void KeyboardInterruptHandler(int s)
     exit(1);
 }
 
-void Log(std::string info, int level) 
-{
-
-}
-
 int main()
 {
     //Getting parameters from config file
-    std::string hostname = GetParam("./settings.cfg", "hostname");
-    int buffer_size = std::stoi(GetParam("./settings.cfg", "buffer_size").c_str());
-    int camera_index = std::stoi(GetParam("./settings.cfg", "camera_index").c_str());
-    int subject_index = std::stoi(GetParam("./settings.cfg", "subject_index").c_str());
-    std::string topic_name = GetParam("./settings.cfg", "topic");
-    std::string log_file = GetParam("./settings.cfg", "log_file");
+    std::string hostname = GetParam("hostname");
+    int buffer_size = std::stoi(GetParam("buffer_size").c_str());
+    int camera_index = std::stoi(GetParam("camera_index").c_str());
+    int subject_index = std::stoi(GetParam("subject_index").c_str());
+    std::string topic_name = GetParam("topic");
+    std::string log_file = GetParam("log_file");
 
     std::list<Position> Positions;
     Output_GetCentroidPosition CentroidPosition;
