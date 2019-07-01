@@ -145,11 +145,11 @@ string Adapt(const Unit::Enum i_Unit)
 
 Communicator::Communicator(/* args */)
 {
-    hostname = GetParam("./settings.cfg", "hostname");
-    buffer_size = stoi(GetParam("./settings.cfg", "buffer_size").c_str());
-    camera_index = stoi(GetParam("./settings.cfg", "camera_index").c_str());
-    subject_index = stoi(GetParam("./settings.cfg", "subject_index").c_str());
-    topic_name = GetParam("./settings.cfg", "topic");
+    hostname = GetParam("hostname");
+    buffer_size = stoi(GetParam("buffer_size").c_str());
+    camera_index = stoi(GetParam("camera_index").c_str());
+    subject_index = stoi(GetParam("subject_index").c_str());
+    topic_name = GetParam("topic");
 }
 
 void Communicator::Connect()
@@ -242,25 +242,9 @@ void Communicator::FrameGetter()
         for (unsigned int CameraIndex = 0; CameraIndex < CameraCount; ++CameraIndex)
         {
             const std::string CameraName = MyClient.GetCameraName(CameraIndex).CameraName;
-            unsigned int CentroidCount = MyClient.GetCentroidCount(CameraName).CentroidCount;
 
             Log("Camera #" + to_string(CameraIndex) + ":" + '\n'
-            + "    Name: " + CameraName + '\n'
-            + "    Type: " + string(MyClient.GetCameraType(CameraName).CameraType) + '\n'
-            + "    Display Name: " + string(MyClient.GetCameraDisplayName(CameraName).CameraDisplayName) + '\n'
-            + "    Is Video Camera: " + (MyClient.GetIsVideoCamera(CameraName).IsVideoCamera ? "true" : "false") + '\n'
-            + "    Centroids(" + to_string(CentroidCount) + "):", INFO);
-
-            for (unsigned int CentroidIndex = 0; CentroidIndex < CentroidCount; ++CentroidIndex)
-            {
-                Output_GetCentroidPosition _Output_GetCentroidPosition = MyClient.GetCentroidPosition(CameraName, CentroidIndex);
-                Log("      Centroid #" + to_string(CentroidIndex) + ":" + '\n'
-                + "        Position: (" + to_string(_Output_GetCentroidPosition.CentroidPosition[0]) + ", "
-                              + to_string(_Output_GetCentroidPosition.CentroidPosition[1]) + ")" + '\n'
-                + "        Radius: (" + to_string(_Output_GetCentroidPosition.Radius) + ")", INFO);
-                CurrentPosition = {*_Output_GetCentroidPosition.CentroidPosition, _Output_GetCentroidPosition.Radius};
-                Positions.push_back(CurrentPosition);
-            }
+            + "    Name: " + CameraName + '\n', INFO);
         }
     }
 }

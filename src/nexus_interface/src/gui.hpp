@@ -8,10 +8,19 @@
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
-#include <wx/preferences.h>
-#include <wx/panel.h>
-#include <wx/frame.h>
-#include <wx/textctrl.h>
+#include "wx/preferences.h"
+#include "wx/app.h"
+#include "wx/statusbr.h"
+#include "wx/config.h"
+#include "wx/panel.h"
+#include "wx/scopedptr.h"
+#include "wx/menu.h"
+#include "wx/checkbox.h"
+#include "wx/stattext.h"
+#include "wx/sizer.h"
+#include "wx/artprov.h"
+#include "wx/frame.h"
+#include "wx/textctrl.h"
 #include "communicator.hpp"
 #include <thread>
 
@@ -42,43 +51,23 @@ private:
     wxDECLARE_EVENT_TABLE();
 };
 
-class PrefPage : public wxPanel
+class PrefPagePanel : public wxPanel
 {
 public:
-    PrefPage(wxWindow *parent);
+    PrefPagePanel(wxWindow *parent);
 
 private:
     std::list<wxTextCtrl *> parameters;
     void UpdateSettings() const;
     list<ConfigLine> current_config;
-    void ChangeUsedCtrl(wxCommandEvent& e);
 };
 
-PrefPage::PrefPage(wxWindow *parent) : wxPanel(parent)
+class PrefPage : public wxStockPreferencesPage
 {
-    current_config = GetConfigLines();
-    wxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-    for (ConfigLine &line : current_config)
-    {
-        wxTextCtrl *text = new wxTextCtrl(this, wxID_ANY);
-        text->SetLabel(line.name.c_str());
-        text->SetValue(line.value.c_str());
-
-        sizer->Add(text, wxSizerFlags().Border());
-        parameters.push_back(text);
-    }
-    SetSizerAndFit(sizer);
-}
-
-void PrefPage::UpdateSettings() const 
-{
-    WriteConfigLines(current_config);
-}
-
-void PrefPage::ChangeUsedCtrl(wxCommandEvent& e) 
-{
-    
-}
+public:
+    PrefPage() : wxStockPreferencesPage(Kind_General) {}
+    virtual wxWindow *CreateWindow(wxWindow *parent);
+};
 
 enum
 {

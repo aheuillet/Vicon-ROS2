@@ -25,8 +25,8 @@ private:
     Position CurrentPosition;
     bool running = false;
     string Adapt(const bool i_Value) const;
-    string Adapt(const TimecodeStandard::Enum i_Standard) const;
-    string Adapt(const Direction::Enum i_Direction) const;
+    string Adapt(const ViconDataStreamSDK::CPP::TimecodeStandard::Enum i_Standard) const;
+    string Adapt(const ViconDataStreamSDK::CPP::Direction::Enum i_Direction) const;
 
 public:
     Communicator(/* args */);

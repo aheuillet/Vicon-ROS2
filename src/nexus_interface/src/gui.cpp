@@ -14,6 +14,7 @@ wxIMPLEMENT_APP(MyApp);
 bool MyApp::OnInit()
 {
     MyFrame *frame = new MyFrame( "ROS2VICON", wxPoint(50, 50), wxSize(450, 340) );
+    Log("Creating GUI...", INFO);
     frame->Show( true );
     return true;
 }
@@ -41,7 +42,6 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     SetSizer(buttonsSizer);
     SetMenuBar( menuBar );
     CreateStatusBar();
-    SetStatusStyles(1, [wxSB_RAISED]);
     SetStatusText( "Welcome to ROS2VICON! Connecting to server..." );
     client.Connect();
     std::string status_msg = "Connected to " + client.GetHostName(); 
@@ -71,7 +71,43 @@ void MyFrame::OnStop(wxCommandEvent& event)
 
 void MyFrame::OnSettings(wxCommandEvent& event) 
 {
-    editor = new wxPreferencesEditor("Settings");
-    editor->AddPage(wxStock)
+    if (!editor) 
+    {
+        editor = new wxPreferencesEditor("Settings");
+        editor->AddPage(new PrefPage());
+    }
+    editor->Show(this);
+}
 
+wxWindow* PrefPage::CreateWindow(wxWindow *parent)
+        { return new PrefPagePanel(parent); }
+
+PrefPagePanel::PrefPagePanel(wxWindow *parent) : wxPanel(parent)
+{
+    current_config = GetConfigLines();
+    wxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+    for (ConfigLine &line : current_config)
+    {
+        wxTextCtrl *text = new wxTextCtrl(this, wxID_ANY);
+        text->SetLabel(line.name.c_str());
+        text->SetValue(line.value.c_str());
+
+        sizer->Add(text, wxSizerFlags().Border());
+
+        text->Bind(wxEVT_TEXT, [=](wxCommandEvent &) {
+            for (ConfigLine &line : current_config)
+            {
+                if (line.name == text->GetLabel())
+                    line.value = text->GetValue();
+            }
+            UpdateSettings();
+        });
+        parameters.push_back(text);
+    }
+    SetSizerAndFit(sizer);
+}
+
+void PrefPagePanel::UpdateSettings() const
+{
+    WriteConfigLines(current_config);
 }
