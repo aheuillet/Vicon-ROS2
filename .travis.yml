@@ -13,7 +13,7 @@ before_install:
   - source /opt/ros/dashing/setup.bash
   - sudo apt install python3-colcon-common-extensions
   - sudo apt install cmake
-  - sudo sh install.sh
+  - sudo bash install.sh
 
-install: cd src/nexus_interface/ && sudo colcon build 
+install: cd src/nexus_interface/ && colcon build 
 

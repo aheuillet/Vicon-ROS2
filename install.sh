@@ -15,6 +15,6 @@ sudo chmod 0755 /usr/lib/libViconDataStreamSDK_CPP.so /usr/lib/libboost_system-m
 echo "." 
 sudo ldconfig
 echo "."
-cd src/nexus_interface/ && colcon build && source install/setup.bash && cd ../..
+#cd src/nexus_interface/ && colcon build && source install/setup.bash && cd ../..
 echo "Installlation finished"
 
