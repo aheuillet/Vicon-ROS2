@@ -75,7 +75,7 @@ void PrefPage::UpdateSettings() const
     WriteConfigLines(current_config);
 }
 
-void PrefPage::ChangeUsedCtrl() 
+void PrefPage::ChangeUsedCtrl(wxCommandEvent& e) 
 {
     
 }

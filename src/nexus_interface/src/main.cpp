@@ -2,20 +2,22 @@
 #include "utils.hpp"
 #include <iostream>
 #include <list>
-//#include <csignal>
+#include <csignal>
 #include <string>
+
+#define output_stream std::cout
 
 using namespace ViconDataStreamSDK::CPP;
 
 Client MyClient;
 
-/* void KeyboardInterruptHandler(int s)
+void KeyboardInterruptHandler(int s)
 {
     std::cout << s << std::endl; //To stop compiler from complaining
     std::cout << "Exiting now..." << std::endl;
     MyClient.Disconnect();
     exit(1);
-} */
+}
 
 int main()
 {
@@ -28,8 +30,6 @@ int main()
     std::string log_file = GetParam("log_file");
 
     std::list<Position> Positions;
-    Output_GetCentroidPosition CentroidPosition;
-    Output_GetDeviceCount GDC;
     Output_GetDeviceName GDN;
     Position CurrentPosition;
     std::string device_name;
@@ -42,7 +42,7 @@ int main()
         exit(1);
     }
     MyClient.EnableDebugData();
-    MyClient.EnableGreyscaleData();
+    MyClient.EnableSegmentData();
     Output_GetFrame Frame = MyClient.GetFrame();
 
     MyClient.SetBufferSize(buffer_size);
@@ -54,21 +54,67 @@ int main()
     std::cout << GCN.CameraName << std::endl;
 
     //Installing a SIGINT signal handler to interrupt loop
-    /* struct sigaction sigIntHandler;
+    struct sigaction sigIntHandler;
     sigIntHandler.sa_handler = KeyboardInterruptHandler;
     sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
 
-    sigaction(SIGINT, &sigIntHandler, NULL); */
+    sigaction(SIGINT, &sigIntHandler, NULL);
     while (true)
     {
-        CentroidPosition = MyClient.GetCentroidPosition(GCN.CameraName, 0);
-        CurrentPosition = {*CentroidPosition.CentroidPosition, CentroidPosition.Radius};
-        std::cout << CurrentPosition.toString() << std::endl;
-        Positions.push_back(CurrentPosition);
+        // Count the number of subjects
+        unsigned int SubjectCount = MyClient.GetSubjectCount().SubjectCount;
+        output_stream << "Subjects (" << SubjectCount << "):" << std::endl;
+        for (unsigned int SubjectIndex = 0; SubjectIndex < SubjectCount; ++SubjectIndex)
+        {
+            output_stream << "  Subject #" << SubjectIndex << std::endl;
 
-        Frame = MyClient.GetFrame();
+            // Get the subject name
+            std::string SubjectName = MyClient.GetSubjectName(SubjectIndex).SubjectName;
+            output_stream << "    Name: " << SubjectName << std::endl;
+
+            // Get the root segment
+            std::string RootSegment = MyClient.GetSubjectRootSegmentName(SubjectName).SegmentName;
+            output_stream << "    Root Segment: " << RootSegment << std::endl;
+
+            // Count the number of segments
+            unsigned int SegmentCount = MyClient.GetSegmentCount(SubjectName).SegmentCount;
+            output_stream << "    Segments (" << SegmentCount << "):" << std::endl;
+            for (unsigned int SegmentIndex = 0; SegmentIndex < SegmentCount; ++SegmentIndex)
+            {
+                output_stream << "      Segment #" << SegmentIndex << std::endl;
+
+                // Get the segment name
+                std::string SegmentName = MyClient.GetSegmentName(SubjectName, SegmentIndex).SegmentName;
+                output_stream << "        Name: " << SegmentName << std::endl;
+
+                // Get the segment parent
+                std::string SegmentParentName = MyClient.GetSegmentParentName(SubjectName, SegmentName).SegmentName;
+                output_stream << "        Parent: " << SegmentParentName << std::endl;
+
+                // Get the segment's children
+                unsigned int ChildCount = MyClient.GetSegmentChildCount(SubjectName, SegmentName).SegmentCount;
+                output_stream << "     Children (" << ChildCount << "):" << std::endl;
+                for (unsigned int ChildIndex = 0; ChildIndex < ChildCount; ++ChildIndex)
+                {
+                    std::string ChildName = MyClient.GetSegmentChildName(SubjectName, SegmentName, ChildIndex).SegmentName;
+                    output_stream << "       " << ChildName << std::endl;
+                }
+
+                Output_GetSegmentGlobalTranslation _Output_GetSegmentGlobalTranslation =
+                    MyClient.GetSegmentGlobalTranslation(SubjectName, SegmentName);
+                output_stream << "        Global Translation: (" << _Output_GetSegmentGlobalTranslation.Translation[0] << ", "
+                              << _Output_GetSegmentGlobalTranslation.Translation[1] << ", "
+                              << _Output_GetSegmentGlobalTranslation.Translation[2] << ") "
+                              << std::endl;
+                for (size_t i = 0; i < POSITION_NUMBER; i++)
+                {
+                    CurrentPosition.translation[i] = _Output_GetSegmentGlobalTranslation.Translation[i];
+                }
+            }
+            Frame = MyClient.GetFrame();
+        }
+
+        return 0;
     }
-
-    return 0;
 }

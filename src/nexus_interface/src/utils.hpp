@@ -7,15 +7,15 @@
 #include "logging.hpp"
 
 #define CONFIG_FILE_LOCATION "./settings.cfg"
+#define POSITION_NUMBER 3
 
 struct Position
 {
-    double position_point[2];
-    double radius;
+    double translation[3];
 
     std::string toString() 
     {
-        return "First point: " + std::to_string(position_point[0]) + " Second point: " + std::to_string(position_point[1]) + " Radius: " + std::to_string(radius); 
+        return "X: " + std::to_string(translation[0]) + " Y: " + std::to_string(translation[1]) + " Z: " + std::to_string(translation[2]); 
     }
 } typedef Position;
 

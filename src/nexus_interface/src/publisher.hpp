@@ -5,8 +5,6 @@
 #include "nexus_interface/msg/position.hpp"
 #include "utils.hpp"
 
-#define POSITION_NUMBER 2
-
 class Publisher : public rclcpp::Node
 {
 private:

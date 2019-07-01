@@ -1,2 +1,3 @@
-uint8[2] position_point
-uint8 radius
+uint8 x
+uint8 y
+uint8 z
