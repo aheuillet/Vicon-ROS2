@@ -2,20 +2,20 @@
 #include "utils.hpp"
 #include <iostream>
 #include <list>
-#include <csignal>
+//#include <csignal>
 #include <string>
 
 using namespace ViconDataStreamSDK::CPP;
 
 Client MyClient;
 
-void KeyboardInterruptHandler(int s)
+/* void KeyboardInterruptHandler(int s)
 {
     std::cout << s << std::endl; //To stop compiler from complaining
     std::cout << "Exiting now..." << std::endl;
     MyClient.Disconnect();
     exit(1);
-}
+} */
 
 int main()
 {
@@ -54,12 +54,12 @@ int main()
     std::cout << GCN.CameraName << std::endl;
 
     //Installing a SIGINT signal handler to interrupt loop
-    struct sigaction sigIntHandler;
+    /* struct sigaction sigIntHandler;
     sigIntHandler.sa_handler = KeyboardInterruptHandler;
     sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
 
-    sigaction(SIGINT, &sigIntHandler, NULL);
+    sigaction(SIGINT, &sigIntHandler, NULL); */
     while (true)
     {
         CentroidPosition = MyClient.GetCentroidPosition(GCN.CameraName, 0);
