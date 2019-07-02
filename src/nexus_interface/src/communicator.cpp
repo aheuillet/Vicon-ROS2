@@ -145,6 +145,10 @@ string Adapt(const Unit::Enum i_Unit)
 
 Communicator::Communicator(/* args */)
 {
+}
+
+void Communicator::GetParams() 
+{
     hostname = GetParam("hostname");
     buffer_size = stoi(GetParam("buffer_size").c_str());
     camera_index = stoi(GetParam("camera_index").c_str());
@@ -154,8 +158,9 @@ Communicator::Communicator(/* args */)
 
 bool Communicator::Connect()
 {
+    GetParams();
     string msg = "Connecting to " + hostname + " ...";
-    cout << msg << flush;
+    cout << msg << endl;
     Log(msg, INFO);
     int counter = 0;
     while (!MyClient.IsConnected().Connected)

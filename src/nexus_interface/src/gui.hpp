@@ -42,6 +42,8 @@ private:
     wxSizer *buttonsSizer;
     wxMenu *menuHelp;
     wxMenuBar *menuBar;
+    wxButton *start_button;
+    wxButton *stop_button;
     wxPreferencesEditor *editor;
     void OnStart(wxCommandEvent &event);
     void OnStop(wxCommandEvent &event);

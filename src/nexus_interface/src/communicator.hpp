@@ -27,6 +27,7 @@ private:
     string Adapt(const bool i_Value) const;
     string Adapt(const ViconDataStreamSDK::CPP::TimecodeStandard::Enum i_Standard) const;
     string Adapt(const ViconDataStreamSDK::CPP::Direction::Enum i_Direction) const;
+    void GetParams();
 
 public:
     Communicator(/* args */);

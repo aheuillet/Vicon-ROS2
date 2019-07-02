@@ -22,7 +22,7 @@ inline void Log(std::string logMsg, int level)
     log_mtx.lock();
     std::string filePath = "client.log";
     std::ofstream ofs(filePath.c_str(), std::ios_base::out | std::ios_base::app);
-    ofs << " [" + log_types[level] + "] " + logMsg << std::endl;
+    ofs << " [" + log_types[level] + "] " + logMsg << '\n';
     ofs.close();
     log_mtx.unlock();
 }
@@ -32,7 +32,7 @@ inline void NewLog()
     remove("client.log");
     std::string filePath = "client.log";
     std::ofstream ofs(filePath.c_str(), std::ios_base::out | std::ios_base::app);
-    ofs << "ROS2VICON 1.0" << std::endl;
+    ofs << "ROS2VICON 1.0" << '\n';
     ofs.close();
 }
 

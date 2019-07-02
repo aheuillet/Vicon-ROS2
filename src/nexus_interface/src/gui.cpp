@@ -25,9 +25,12 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 {
     menuCommand = new wxMenu;
     buttonsSizer = new wxBoxSizer(wxVERTICAL);
+    start_button = new wxButton(this, BUTTON_Start, _T("Start"));
+    stop_button = new wxButton(this, BUTTON_Stop, _T("Stop"));
+    stop_button->Enable(false);
     buttonsSizer->AddStretchSpacer(1);
-    buttonsSizer->Add(new wxButton(this, BUTTON_Start, _T("Start")), 0, wxEXPAND|wxALIGN_LEFT|wxALL);
-    buttonsSizer->Add(new wxButton(this, BUTTON_Stop, _T("Stop")), 0, wxEXPAND|wxALIGN_RIGHT|wxALL);
+    buttonsSizer->Add(start_button, 0, wxEXPAND|wxALIGN_LEFT|wxALL);
+    buttonsSizer->Add(stop_button, 0, wxEXPAND|wxALIGN_RIGHT|wxALL);
     buttonsSizer->AddStretchSpacer(1);
     menuCommand->Append(ID_Start, "&Start\tCtrl-S",
                      "Help string shown in status bar for this menu item");
@@ -60,6 +63,8 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 void MyFrame::OnStart(wxCommandEvent& event)
 {
     Log("Stopping streaming to ROS...", INFO);
+    start_button->Enable(false);
+    stop_button->Enable(true);
     std::string status_msg = "Connecting to " + client.GetHostName();
     SetStatusText(status_msg.c_str());
     if(client.Connect()) 
@@ -67,16 +72,24 @@ void MyFrame::OnStart(wxCommandEvent& event)
         status_msg = "Connected to " + client.GetHostName();
         main_loop = thread(&Communicator::FrameGetter, ref(client));
     }
-    else
-        status_msg = "Failed to connect to " + client.GetHostName(); 
+    else 
+    {
+        status_msg = "Failed to connect to " + client.GetHostName();
+        start_button->Enable(true);
+        stop_button->Enable(false);
+    } 
     SetStatusText(status_msg.c_str());
 }
 
 void MyFrame::OnStop(wxCommandEvent& event)
 {
     Log("Stopping streaming to ROS...", INFO);
+    start_button->Enable(true);
+    stop_button->Enable(false);
     client.Disconnect();
     main_loop.join();
+    string status_msg = "Disconnected from " + client.GetHostName();
+    SetStatusText(status_msg.c_str());
 }
 
 void MyFrame::OnSettings(wxCommandEvent& event) 
