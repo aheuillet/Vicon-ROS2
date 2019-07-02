@@ -30,8 +30,8 @@ private:
 
 public:
     Communicator(/* args */);
-    void Connect();
-    void Disconnect();
+    bool Connect();
+    bool Disconnect();
     bool IsConnected() const;
     void FrameGetter();
     string GetHostName() const;

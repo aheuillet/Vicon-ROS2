@@ -62,6 +62,7 @@ void WriteConfigLines(list<ConfigLine> lines)
     string line;
     if (cFile.is_open()) 
     {
+        Log("Writing new configuration...", INFO);
         for (ConfigLine & line : lines) 
         {
             cFile << line.name + "=" + line.value << endl;

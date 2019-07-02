@@ -13,6 +13,7 @@ wxIMPLEMENT_APP(MyApp);
 
 bool MyApp::OnInit()
 {
+    NewLog();
     MyFrame *frame = new MyFrame( "ROS2VICON", wxPoint(50, 50), wxSize(450, 340) );
     Log("Creating GUI...", INFO);
     frame->Show( true );
@@ -42,10 +43,7 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     SetSizer(buttonsSizer);
     SetMenuBar( menuBar );
     CreateStatusBar();
-    SetStatusText( "Welcome to ROS2VICON! Connecting to server..." );
-    client.Connect();
-    std::string status_msg = "Connected to " + client.GetHostName(); 
-    SetStatusText(status_msg.c_str());
+    SetStatusText( "Welcome to ROS2VICON!" );
 }
 
 void MyFrame::OnExit(wxCommandEvent& event)
@@ -56,17 +54,29 @@ void MyFrame::OnExit(wxCommandEvent& event)
 void MyFrame::OnAbout(wxCommandEvent& event)
 {
     wxMessageBox( "This free software was made using WxWidgets 3.0.4, ROS2 Dashing Diademata and Vicon DataStream 1.8",
-                  "About ROS2VICON", wxOK | wxICON_INFORMATION );
+                  "About ROS2VICON 1.0", wxOK | wxICON_INFORMATION );
 }
 
 void MyFrame::OnStart(wxCommandEvent& event)
 {
-    wxLogMessage("Starting streaming to ROS");
+    Log("Stopping streaming to ROS...", INFO);
+    std::string status_msg = "Connecting to " + client.GetHostName();
+    SetStatusText(status_msg.c_str());
+    if(client.Connect()) 
+    {
+        status_msg = "Connected to " + client.GetHostName();
+        main_loop = thread(&Communicator::FrameGetter, ref(client));
+    }
+    else
+        status_msg = "Failed to connect to " + client.GetHostName(); 
+    SetStatusText(status_msg.c_str());
 }
 
 void MyFrame::OnStop(wxCommandEvent& event)
 {
-    wxLogMessage("Stopping streaming to ROS");
+    Log("Stopping streaming to ROS...", INFO);
+    client.Disconnect();
+    main_loop.join();
 }
 
 void MyFrame::OnSettings(wxCommandEvent& event) 
@@ -85,13 +95,15 @@ wxWindow* PrefPage::CreateWindow(wxWindow *parent)
 PrefPagePanel::PrefPagePanel(wxWindow *parent) : wxPanel(parent)
 {
     current_config = GetConfigLines();
-    wxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+    wxSizer *sizer = new wxGridSizer(4);
     for (ConfigLine &line : current_config)
     {
         wxTextCtrl *text = new wxTextCtrl(this, wxID_ANY);
+        wxStaticText *label = new wxStaticText(this, wxID_ANY, (line.name + ":").c_str());
         text->SetLabel(line.name.c_str());
         text->SetValue(line.value.c_str());
 
+        sizer->Add(label, wxSizerFlags().Border());
         sizer->Add(text, wxSizerFlags().Border());
 
         text->Bind(wxEVT_TEXT, [=](wxCommandEvent &) {
@@ -104,7 +116,7 @@ PrefPagePanel::PrefPagePanel(wxWindow *parent) : wxPanel(parent)
         });
         parameters.push_back(text);
     }
-    SetSizerAndFit(sizer);
+    SetSizer(sizer);
 }
 
 void PrefPagePanel::UpdateSettings() const

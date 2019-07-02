@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Installing application, please wait"
+echo "Installing shared libraries, please wait"
 sudo cp src/DataStreamSDK/libViconDataStreamSDK_CPP.so /usr/lib
 echo "."
 sudo cp src/DataStreamSDK/libboost_system-mt.so.1.58.0 /usr/lib
@@ -15,6 +15,5 @@ sudo chmod 0755 /usr/lib/libViconDataStreamSDK_CPP.so /usr/lib/libboost_system-m
 echo "." 
 sudo ldconfig
 echo "."
-#cd src/nexus_interface/ && colcon build && source install/setup.bash && cd ../..
 echo "Installlation finished"
 

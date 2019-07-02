@@ -152,11 +152,12 @@ Communicator::Communicator(/* args */)
     topic_name = GetParam("topic");
 }
 
-void Communicator::Connect()
+bool Communicator::Connect()
 {
     string msg = "Connecting to " + hostname + " ...";
     cout << msg << flush;
     Log(msg, INFO);
+    int counter = 0;
     while (!MyClient.IsConnected().Connected)
     {
         bool ok = (MyClient.Connect(hostname).Result == Result::Success);
@@ -165,8 +166,14 @@ void Communicator::Connect()
             msg = "Connect failed...";
             cout << msg << endl;
             Log(msg, WARNING);
+            counter++;
         }
-        cout << ".";
+        if (counter >= 3)
+        {
+            msg = "Aborting attempt to connect to " + hostname;
+            Log(msg, ERROR);
+            return false;
+        }
         sleep(1);
     }
     msg = "Connection successfully established with " + hostname;
@@ -199,9 +206,10 @@ void Communicator::Connect()
     Log("Setting client buffer size to " + to_string(buffer_size), INFO);
 
     running = true;
+    return true;
 }
 
-void Communicator::Disconnect()
+bool Communicator::Disconnect()
 {
     running = false;
     sleep(1);
@@ -213,6 +221,9 @@ void Communicator::Disconnect()
     Log("Disconnecting from " + hostname + "...", INFO);
     MyClient.Disconnect();
     Log("Successfully disconnected", INFO);
+    if (!MyClient.IsConnected().Connected)
+        return true;
+    return false;
 }
 
 void Communicator::FrameGetter()
@@ -241,24 +252,74 @@ void Communicator::FrameGetter()
 
         for (unsigned int CameraIndex = 0; CameraIndex < CameraCount; ++CameraIndex)
         {
-            const std::string CameraName = MyClient.GetCameraName(CameraIndex).CameraName;
+            const string CameraName = MyClient.GetCameraName(CameraIndex).CameraName;
 
-            Log("Camera #" + to_string(CameraIndex) + ":" + '\n'
-            + "    Name: " + CameraName + '\n', INFO);
+            Log("Camera #" + to_string(CameraIndex) + ":" + '\n' + "    Name: " + CameraName + '\n', INFO);
+        }
+
+        unsigned int SubjectCount = MyClient.GetSubjectCount().SubjectCount;
+        cout << "Subjects (" << SubjectCount << "):" << endl;
+        for (unsigned int SubjectIndex = 0; SubjectIndex < SubjectCount; ++SubjectIndex)
+        {
+            cout << "  Subject #" << SubjectIndex << endl;
+
+            // Get the subject name
+            string SubjectName = MyClient.GetSubjectName(SubjectIndex).SubjectName;
+            cout << "    Name: " << SubjectName << endl;
+
+            // Get the root segment
+            string RootSegment = MyClient.GetSubjectRootSegmentName(SubjectName).SegmentName;
+            cout << "    Root Segment: " << RootSegment << endl;
+
+            // Count the number of segments
+            unsigned int SegmentCount = MyClient.GetSegmentCount(SubjectName).SegmentCount;
+            cout << "    Segments (" << SegmentCount << "):" << endl;
+            for (unsigned int SegmentIndex = 0; SegmentIndex < SegmentCount; ++SegmentIndex)
+            {
+                cout << "      Segment #" << SegmentIndex << endl;
+
+                // Get the segment name
+                string SegmentName = MyClient.GetSegmentName(SubjectName, SegmentIndex).SegmentName;
+                cout << "        Name: " << SegmentName << endl;
+
+                // Get the segment parent
+                string SegmentParentName = MyClient.GetSegmentParentName(SubjectName, SegmentName).SegmentName;
+                cout << "        Parent: " << SegmentParentName << endl;
+
+                // Get the segment's children
+                unsigned int ChildCount = MyClient.GetSegmentChildCount(SubjectName, SegmentName).SegmentCount;
+                cout << "     Children (" << ChildCount << "):" << endl;
+                for (unsigned int ChildIndex = 0; ChildIndex < ChildCount; ++ChildIndex)
+                {
+                    string ChildName = MyClient.GetSegmentChildName(SubjectName, SegmentName, ChildIndex).SegmentName;
+                    cout << "       " << ChildName << endl;
+                }
+
+                Output_GetSegmentGlobalTranslation _Output_GetSegmentGlobalTranslation =
+                    MyClient.GetSegmentGlobalTranslation(SubjectName, SegmentName);
+                cout << "        Global Translation: (" << _Output_GetSegmentGlobalTranslation.Translation[0] << ", "
+                              << _Output_GetSegmentGlobalTranslation.Translation[1] << ", "
+                              << _Output_GetSegmentGlobalTranslation.Translation[2] << ") "
+                              << endl;
+                for (size_t i = 0; i < POSITION_NUMBER; i++)
+                {
+                    CurrentPosition.translation[i] = _Output_GetSegmentGlobalTranslation.Translation[i];
+                }
+            }
         }
     }
 }
 
-bool Communicator::IsConnected() const 
-{
-    return MyClient.IsConnected().Connected;
-}
+        bool Communicator::IsConnected() const
+        {
+            return MyClient.IsConnected().Connected;
+        }
 
-string Communicator::GetHostName() const 
-{
-    return hostname;
-}
+        string Communicator::GetHostName() const
+        {
+            return hostname;
+        }
 
-Communicator::~Communicator()
-{
-}
+        Communicator::~Communicator()
+        {
+        }

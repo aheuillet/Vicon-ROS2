@@ -5,6 +5,9 @@
 #include <fstream>
 #include <string>
 #include <array>
+#include <mutex>
+
+static std::mutex log_mtx;
 
 enum {
     INFO=0,
@@ -16,10 +19,12 @@ static std::array<std::string, 3> log_types = {std::string("INFO"), std::string(
 
 inline void Log(std::string logMsg, int level)
 {
+    log_mtx.lock();
     std::string filePath = "client.log";
     std::ofstream ofs(filePath.c_str(), std::ios_base::out | std::ios_base::app);
     ofs << " [" + log_types[level] + "] " + logMsg << std::endl;
     ofs.close();
+    log_mtx.unlock();
 }
 
 inline void NewLog()
@@ -27,7 +32,7 @@ inline void NewLog()
     remove("client.log");
     std::string filePath = "client.log";
     std::ofstream ofs(filePath.c_str(), std::ios_base::out | std::ios_base::app);
-    ofs << "Starting Client" << std::endl;
+    ofs << "ROS2VICON 1.0" << std::endl;
     ofs.close();
 }
 

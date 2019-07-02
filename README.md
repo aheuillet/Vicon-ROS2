@@ -8,6 +8,9 @@
 
 Recommanded OS : Ubuntu 18.04 LTS (Bionic Beaver)
 
+If you are using the recommanded OS precised above, you can simply run the `install_ubuntu_bionic.sh` to install all dependencies.
+Otherwise, follow these instructions :
+
 First, make sure that you have installed the latest version of ROS2 (Dashing Diademata).
 If not, follow the instructions at [the ROS2 website](https://index.ros.org/doc/ros2/Installation/Dashing/).
 
@@ -27,9 +30,13 @@ And :
 
 :warning: Do not forget to source the global ROS2 workspace : `source /opt/ros/dashing/setup.bash`
 
-First, run the following command to install the package's dependencies and build the executable :
+First, run the following command to install the package's shared libraries:
 
-`sudo sh install.sh`
+`sudo sh install_libs.sh`
+
+Then, run the following command to build the executable:
+
+`cd src/nexus_interface/ && colcon build`
 
 Once it is finished, you have to source the current workspace so that ROS2 will be able to find the executable :
 

@@ -24,6 +24,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rcutils)
+find_package(wxWidgets REQUIRED COMPONENTS net core base)
 
 set(msg_files
   "msg/Position.msg"
@@ -35,8 +36,11 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 
 ament_export_dependencies(rosidl_default_runtime)
 
-add_executable(client src/main.cpp src/utils.cpp src/publisher.cpp)
+include(${wxWidgets_USE_FILE})
+add_executable(client src/gui.cpp src/communicator.cpp src/utils.cpp src/publisher.cpp)
 target_link_libraries(client ViconDataStreamSDK_CPP)
+target_link_libraries(client ${wxWidgets_LIBRARIES})
+
 
 ament_target_dependencies(client "rclcpp" "rclutils")
 

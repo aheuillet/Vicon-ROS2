@@ -30,10 +30,7 @@ int main()
     std::string log_file = GetParam("log_file");
 
     std::list<Position> Positions;
-    Output_GetDeviceName GDN;
     Position CurrentPosition;
-    std::string device_name;
-    std::string device_type;
     Output_Connect Output = MyClient.Connect(hostname.c_str());
     std::cerr << "Result: " + std::to_string(Output.Result) << std::endl;
     if (Output.Result != Result::Success)
