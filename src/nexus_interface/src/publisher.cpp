@@ -11,6 +11,9 @@ void Publisher::PublishPosition(Position p)
     msg->x = p.translation[0];
     msg->y = p.translation[1];
     msg->z = p.translation[2];
+    msg->subject_name = p.subject_name;
+    msg->segment_name = p.segment_name;
+    msg->translation_type = p.translation_type;
     position_publisher_->publish(*msg);
 }
 

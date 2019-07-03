@@ -8,10 +8,14 @@
 
 #define CONFIG_FILE_LOCATION "./settings.cfg"
 #define POSITION_NUMBER 3
+#define BODY_PARTS_NUMBER 5
 
 struct Position
 {
     double translation[3];
+    std::string subject_name;
+    std::string segment_name;
+    std::string translation_type;
 
     std::string toString() 
     {

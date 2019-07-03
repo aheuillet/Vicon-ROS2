@@ -21,6 +21,7 @@
 #include "wx/artprov.h"
 #include "wx/frame.h"
 #include "wx/textctrl.h"
+#include "wx/checklst.h"
 #include "communicator.hpp"
 #include <thread>
 

@@ -210,6 +210,8 @@ bool Communicator::Connect()
     MyClient.SetBufferSize(buffer_size);
     Log("Setting client buffer size to " + to_string(buffer_size), INFO);
 
+    pub = new Publisher(topic_name);
+
     running = true;
     return true;
 }
@@ -310,6 +312,10 @@ void Communicator::FrameGetter()
                 {
                     CurrentPosition.translation[i] = _Output_GetSegmentGlobalTranslation.Translation[i];
                 }
+                CurrentPosition.segment_name = SegmentName;
+                CurrentPosition.subject_name = SubjectName;
+                CurrentPosition.translation_type = "global";
+                pub->PublishPosition(CurrentPosition);
             }
         }
     }

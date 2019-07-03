@@ -4,6 +4,7 @@
 #include "../../DataStreamSDK/DataStreamClient.h"
 #include "logging.hpp"
 #include "utils.hpp"
+#include "publisher.hpp"
 #include <iostream>
 #include <list>
 #include <csignal>
@@ -23,6 +24,7 @@ private:
     string topic_name;
     list<Position> Positions;
     Position CurrentPosition;
+    Publisher *pub;
     bool running = false;
     string Adapt(const bool i_Value) const;
     string Adapt(const ViconDataStreamSDK::CPP::TimecodeStandard::Enum i_Standard) const;
