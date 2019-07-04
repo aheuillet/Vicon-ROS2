@@ -2,22 +2,27 @@
 
 wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(ID_Start, MyFrame::OnStart)
-        EVT_BUTTON(BUTTON_Start, MyFrame::OnStart)
-            EVT_BUTTON(BUTTON_Stop, MyFrame::OnStop)
-                EVT_MENU(wxID_PREFERENCES, MyFrame::OnSettings)
-                    EVT_MENU(wxID_EXIT, MyFrame::OnExit)
-                        EVT_MENU(wxID_ABOUT, MyFrame::OnAbout)
-                            wxEND_EVENT_TABLE()
+    EVT_BUTTON(BUTTON_Start, MyFrame::OnStart)
+    EVT_BUTTON(BUTTON_Stop, MyFrame::OnStop)
+    EVT_MENU(wxID_PREFERENCES, MyFrame::OnSettings)
+    EVT_MENU(wxID_EXIT, MyFrame::OnExit)
+    EVT_MENU(wxID_ABOUT, MyFrame::OnAbout)
+wxEND_EVENT_TABLE()
 
-                                wxIMPLEMENT_APP(MyApp);
+wxIMPLEMENT_APP(MyApp);
 
 bool MyApp::OnInit()
 {
     NewLog();
-    MyFrame *frame = new MyFrame("ROS2VICON", wxPoint(50, 50), wxSize(450, 340));
+    frame = new MyFrame("ROS2VICON", wxPoint(50, 50), wxSize(450, 340));
     Log("Creating GUI...", INFO);
     frame->Show(true);
     return true;
+}
+
+MyApp::~MyApp() 
+{
+    wxDELETE(frame);
 }
 
 MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
@@ -102,6 +107,17 @@ void MyFrame::OnSettings(wxCommandEvent &event)
     editor->Show(this);
 }
 
+MyFrame::~MyFrame() 
+{
+    wxDELETE(buttonsSizer);
+    wxDELETE(editor);
+    wxDELETE(menuBar);
+    wxDELETE(menuCommand);
+    wxDELETE(menuHelp);
+    wxDELETE(start_button);
+    wxDELETE(stop_button);
+}
+
 wxWindow *PrefPage::CreateWindow(wxWindow *parent)
 {
     return new PrefPagePanel(parent);
@@ -163,7 +179,6 @@ PrefPagePanel::PrefPagePanel(wxWindow *parent) : wxPanel(parent)
                 }
                 UpdateSettings();
             });
-            parameters.push_back(text);
         }
     }
     SetSizer(sizer);
@@ -173,3 +188,6 @@ void PrefPagePanel::UpdateSettings() const
 {
     WriteConfigLines(current_config);
 }
+
+PrefPagePanel::~PrefPagePanel() 
+{}

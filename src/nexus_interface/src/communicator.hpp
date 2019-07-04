@@ -18,10 +18,10 @@ class Communicator
 private:
     ViconDataStreamSDK::CPP::Client MyClient;
     string hostname;
-    int buffer_size;
-    int camera_index;
-    int subject_index;
+    unsigned int buffer_size;
+    unsigned int target_subject_index;
     string topic_name;
+    string segments;
     list<Position> Positions;
     Position CurrentPosition;
     Publisher *pub;

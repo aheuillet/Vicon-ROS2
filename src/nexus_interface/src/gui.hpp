@@ -25,16 +25,11 @@
 #include "communicator.hpp"
 #include <thread>
 
-class MyApp : public wxApp
-{
-public:
-    virtual bool OnInit();
-};
-
 class MyFrame : public wxFrame
 {
 public:
     MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size);
+    ~MyFrame();
 
 private:
     Communicator client;
@@ -54,13 +49,22 @@ private:
     wxDECLARE_EVENT_TABLE();
 };
 
+class MyApp : public wxApp
+{
+public:
+    virtual bool OnInit();
+    ~MyApp();
+private:
+    MyFrame * frame;
+};
+
 class PrefPagePanel : public wxPanel
 {
 public:
     PrefPagePanel(wxWindow *parent);
+    ~PrefPagePanel();
 
 private:
-    std::list<wxTextCtrl *> parameters;
     void UpdateSettings() const;
     list<ConfigLine> current_config;
 };

@@ -4,6 +4,7 @@
 #include <list>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 #include "logging.hpp"
 
 #define CONFIG_FILE_LOCATION "./settings.cfg"
@@ -34,6 +35,8 @@ void WriteConfigLines(std::list<ConfigLine> lines);
 std::list<ConfigLine> GetConfigLines();
 
 std::string GetParam(std::string identifier);
+
+bool ci_find_substr(std::string str1, std::string str2);
 
 
 #endif // UTILS_HPP

@@ -145,15 +145,18 @@ string Adapt(const Unit::Enum i_Unit)
 
 Communicator::Communicator(/* args */)
 {
+    const char* const* argv = NULL;
+    rclcpp::init(0, argv);
+    pub = NULL;
 }
 
 void Communicator::GetParams() 
 {
     hostname = GetParam("hostname");
     buffer_size = stoi(GetParam("buffer_size").c_str());
-    camera_index = stoi(GetParam("camera_index").c_str());
-    subject_index = stoi(GetParam("subject_index").c_str());
+    target_subject_index = stoi(GetParam("subject_index").c_str());
     topic_name = GetParam("topic");
+    segments = GetParam("segments");
 }
 
 bool Communicator::Connect()
@@ -210,7 +213,8 @@ bool Communicator::Connect()
     MyClient.SetBufferSize(buffer_size);
     Log("Setting client buffer size to " + to_string(buffer_size), INFO);
 
-    pub = new Publisher(topic_name);
+    if (!pub)
+        pub = new Publisher(topic_name);
 
     running = true;
     return true;
@@ -240,9 +244,6 @@ void Communicator::FrameGetter()
         Log("Fetching new frame...", INFO);
         MyClient.GetFrame();
 
-        Output_GetFrameNumber _Output_GetFrameNumber = MyClient.GetFrameNumber();
-        Log("Frame Number: " + _Output_GetFrameNumber.FrameNumber, INFO);
-
         Output_GetFrameRate Rate = MyClient.GetFrameRate();
         Log("Frame Rate: " + to_string(Rate.FrameRateHz) + " Hz", INFO);
 
@@ -265,72 +266,56 @@ void Communicator::FrameGetter()
         }
 
         unsigned int SubjectCount = MyClient.GetSubjectCount().SubjectCount;
-        cout << "Subjects (" << SubjectCount << "):" << endl;
+        msg = SubjectCount + " subject(s) detected";
+        Log(msg, INFO);
+        
         for (unsigned int SubjectIndex = 0; SubjectIndex < SubjectCount; ++SubjectIndex)
         {
-            cout << "  Subject #" << SubjectIndex << endl;
+            if (SubjectIndex == target_subject_index) 
+            {  
+                // Get the subject name
+                string SubjectName = MyClient.GetSubjectName(SubjectIndex).SubjectName;
 
-            // Get the subject name
-            string SubjectName = MyClient.GetSubjectName(SubjectIndex).SubjectName;
-            cout << "    Name: " << SubjectName << endl;
+                // Count the number of segments
+                unsigned int SegmentCount = MyClient.GetSegmentCount(SubjectName).SegmentCount;
 
-            // Get the root segment
-            string RootSegment = MyClient.GetSubjectRootSegmentName(SubjectName).SegmentName;
-            cout << "    Root Segment: " << RootSegment << endl;
-
-            // Count the number of segments
-            unsigned int SegmentCount = MyClient.GetSegmentCount(SubjectName).SegmentCount;
-            cout << "    Segments (" << SegmentCount << "):" << endl;
-            for (unsigned int SegmentIndex = 0; SegmentIndex < SegmentCount; ++SegmentIndex)
-            {
-                cout << "      Segment #" << SegmentIndex << endl;
-
-                // Get the segment name
-                string SegmentName = MyClient.GetSegmentName(SubjectName, SegmentIndex).SegmentName;
-                cout << "        Name: " << SegmentName << endl;
-
-                // Get the segment parent
-                string SegmentParentName = MyClient.GetSegmentParentName(SubjectName, SegmentName).SegmentName;
-                cout << "        Parent: " << SegmentParentName << endl;
-
-                // Get the segment's children
-                unsigned int ChildCount = MyClient.GetSegmentChildCount(SubjectName, SegmentName).SegmentCount;
-                cout << "     Children (" << ChildCount << "):" << endl;
-                for (unsigned int ChildIndex = 0; ChildIndex < ChildCount; ++ChildIndex)
+                for (unsigned int SegmentIndex = 0; SegmentIndex < SegmentCount; ++SegmentIndex)
                 {
-                    string ChildName = MyClient.GetSegmentChildName(SubjectName, SegmentName, ChildIndex).SegmentName;
-                    cout << "       " << ChildName << endl;
-                }
+                    // Get the segment name
+                    string SegmentName = MyClient.GetSegmentName(SubjectName, SegmentIndex).SegmentName;
 
-                Output_GetSegmentGlobalTranslation _Output_GetSegmentGlobalTranslation =
-                    MyClient.GetSegmentGlobalTranslation(SubjectName, SegmentName);
-                cout << "        Global Translation: (" << _Output_GetSegmentGlobalTranslation.Translation[0] << ", "
-                              << _Output_GetSegmentGlobalTranslation.Translation[1] << ", "
-                              << _Output_GetSegmentGlobalTranslation.Translation[2] << ") "
-                              << endl;
-                for (size_t i = 0; i < POSITION_NUMBER; i++)
-                {
-                    CurrentPosition.translation[i] = _Output_GetSegmentGlobalTranslation.Translation[i];
+                    if (ci_find_substr(segments, SegmentName)) 
+                    {
+                        Output_GetSegmentGlobalTranslation _Output_GetSegmentGlobalTranslation =
+                        MyClient.GetSegmentGlobalTranslation(SubjectName, SegmentName);
+                        for (size_t i = 0; i < POSITION_NUMBER; i++)
+                        {
+                            CurrentPosition.translation[i] = _Output_GetSegmentGlobalTranslation.Translation[i];
+                        }
+                        CurrentPosition.segment_name = SegmentName;
+                        CurrentPosition.subject_name = SubjectName;
+                        CurrentPosition.translation_type = "global";
+                        msg = "Publishing segment " + SegmentName + " from subject " + SubjectName + " with translation type global";
+                        Log(msg, INFO);
+                        pub->PublishPosition(CurrentPosition);
+                    }
                 }
-                CurrentPosition.segment_name = SegmentName;
-                CurrentPosition.subject_name = SubjectName;
-                CurrentPosition.translation_type = "global";
-                pub->PublishPosition(CurrentPosition);
             }
         }
     }
 }
 
-        bool Communicator::IsConnected() const
-        {
-            return MyClient.IsConnected().Connected;
-        }
+bool Communicator::IsConnected() const
+{
+    return MyClient.IsConnected().Connected;
+}
 
-        string Communicator::GetHostName() const
-        {
-            return hostname;
-        }
+string Communicator::GetHostName() const
+{
+    return hostname;
+}
 
-        Communicator::~Communicator()
-        {
-        }
+Communicator::~Communicator()
+{
+    delete pub;
+}

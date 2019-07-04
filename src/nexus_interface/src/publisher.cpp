@@ -2,7 +2,7 @@
 
 Publisher::Publisher(std::string topic_name): Node("vicon_publisher")
 {
-    position_publisher_ = this->create_publisher<nexus_interface::msg::Position>(topic_name);
+    position_publisher_ = this->create_publisher<nexus_interface::msg::Position>(topic_name, 10);
 }
 
 void Publisher::PublishPosition(Position p) 
@@ -20,3 +20,12 @@ void Publisher::PublishPosition(Position p)
 Publisher::~Publisher()
 {   
 }
+
+/* int main(int argc, char const *argv[])
+{
+    rclcpp::init(argc, argv);
+    Publisher pub("toto");
+    sleep(10); 
+    return 0;
+}
+ */

@@ -1,6 +1,7 @@
 #ifndef PUBLISHER_HPP
 #define PUBLISHER_HPP
 #include  <memory>
+#include <unistd.h>
 #include "rclcpp/rclcpp.hpp"
 #include "nexus_interface/msg/position.hpp"
 #include "utils.hpp"
