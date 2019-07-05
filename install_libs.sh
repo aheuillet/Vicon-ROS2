@@ -1,5 +1,4 @@
 #!/bin/sh
-
 echo "Installing shared libraries, please wait"
 sudo cp src/DataStreamSDK/libViconDataStreamSDK_CPP.so /usr/lib
 echo "."

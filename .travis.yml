@@ -8,5 +8,7 @@ before_install:
   - sudo sh install_ubuntu_bionic.sh
   - sudo sh install_libs.sh
 
-script: cd src/nexus_interface/ && colcon build 
+script:
+  - source /opt/ros/dashing/setup.bash 
+  - cd src/nexus_interface/ && colcon build 
 
