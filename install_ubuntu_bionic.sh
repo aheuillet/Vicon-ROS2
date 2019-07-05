@@ -6,7 +6,7 @@ sudo apt update
 sudo apt install -y ros-dashing-ros-base
 sudo apt install -y python3-colcon-common-extensions
 sudo apt install -y cmake
-sudo apt install wx-common wx-headers libwxgtk3.0-dev libwxgtk-media3.0-dev libwxgtk3.0-gtk3-dev libcanberra-gtk-module libcanberra-gtk3-module
+sudo apt install wx-common wx3.0-headers libwxgtk3.0-dev libwxgtk-media3.0-dev libwxgtk3.0-gtk3-dev libcanberra-gtk-module libcanberra-gtk3-module
 sudo ln -sv /usr/include/wx-3.0/wx /usr/include/wx
 source /opt/ros/dashing/setup.bash
 echo "Installation finished\n"

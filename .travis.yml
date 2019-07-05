@@ -5,8 +5,8 @@ dist: bionic
 compiler: gcc
 
 before_install:
-  - sudo sh install_ubuntu_bionic.sh
-  - sudo sh install_libs.sh
+  - sudo bash install_ubuntu_bionic.sh
+  - sudo bash install_libs.sh
 
 script:
   - source /opt/ros/dashing/setup.bash 
