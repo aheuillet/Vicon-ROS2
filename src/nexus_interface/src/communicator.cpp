@@ -294,7 +294,7 @@ void Communicator::FrameGetter()
                         }
                         CurrentPosition.segment_name = SegmentName;
                         CurrentPosition.subject_name = SubjectName;
-                        CurrentPosition.translation_type = "global";
+                        CurrentPosition.translation_type = "Global";
                         msg = "Publishing segment " + SegmentName + " from subject " + SubjectName + " with translation type global";
                         Log(msg, INFO);
                         pub->PublishPosition(CurrentPosition);
