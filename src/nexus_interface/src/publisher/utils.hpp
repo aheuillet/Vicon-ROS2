@@ -17,6 +17,7 @@ struct Position
     std::string subject_name;
     std::string segment_name;
     std::string translation_type;
+    unsigned int frame_number;
 
     std::string toString() 
     {

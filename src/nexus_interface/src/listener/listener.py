@@ -14,6 +14,8 @@ class Listener(Node):
         self.collection = self.db.translations
         self.sub = self.create_subscription(
             Position, 'vicon', self.chatter_callback, 10)
+        self.date = datetime.datetime.utcnow()
+        
 
     def chatter_callback(self, msg):
         document = { "x" : msg.x,
@@ -21,8 +23,8 @@ class Listener(Node):
                      "z" : msg.z,
                      "frame_number" : msg.frame_number,
                      "segment_name" : msg.segment_name,
-                     "trans_type" : msg.trans_type}
-        self.collection = self.db[msg.subject_name + "_" + datetime.datetime.utcnow()]
+                     "translation_type" : msg.translation_type}
+        self.collection = self.db[msg.subject_name + "_" + str(self.date)]
         self.collection.insert_one(document)
 
 def main(args=None):

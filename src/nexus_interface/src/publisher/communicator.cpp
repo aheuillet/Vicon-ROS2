@@ -156,7 +156,14 @@ void Communicator::GetParams()
     buffer_size = stoi(GetParam("buffer_size").c_str());
     target_subject_index = stoi(GetParam("subject_index").c_str());
     topic_name = GetParam("topic");
-    segments = GetParam("segments");
+    string segments_str = GetParam("segments");
+    size_t semicolon = segments_str.find(";");
+    while (semicolon != string::npos)
+    {
+        segments.push_back(segments_str.substr(0, semicolon));
+        segments_str.erase(0, semicolon + 1);
+        semicolon = segments_str.find(";");
+    }
 }
 
 bool Communicator::Connect()
@@ -244,6 +251,9 @@ void Communicator::FrameGetter()
         Log("Fetching new frame...", INFO);
         MyClient.GetFrame();
 
+        Output_GetFrameNumber FrameNumber = MyClient.GetFrameNumber();
+        Log("Frame number: " + to_string(FrameNumber.FrameNumber), INFO);
+
         Output_GetFrameRate Rate = MyClient.GetFrameRate();
         Log("Frame Rate: " + to_string(Rate.FrameRateHz) + " Hz", INFO);
 
@@ -275,6 +285,8 @@ void Communicator::FrameGetter()
             {  
                 // Get the subject name
                 string SubjectName = MyClient.GetSubjectName(SubjectIndex).SubjectName;
+                msg = "Subject " + to_string(SubjectIndex) + " is: " + SubjectName;
+                Log(msg, INFO);
 
                 // Count the number of segments
                 unsigned int SegmentCount = MyClient.GetSegmentCount(SubjectName).SegmentCount;
@@ -283,8 +295,10 @@ void Communicator::FrameGetter()
                 {
                     // Get the segment name
                     string SegmentName = MyClient.GetSegmentName(SubjectName, SegmentIndex).SegmentName;
+                    msg = "Found segment: " + SegmentName;
+                    Log(msg, INFO);
 
-                    if (ci_find_substr(segments, SegmentName)) 
+                    if (IsSegmentValid(SegmentName)) 
                     {
                         Output_GetSegmentGlobalTranslation _Output_GetSegmentGlobalTranslation =
                         MyClient.GetSegmentGlobalTranslation(SubjectName, SegmentName);
@@ -295,10 +309,17 @@ void Communicator::FrameGetter()
                         CurrentPosition.segment_name = SegmentName;
                         CurrentPosition.subject_name = SubjectName;
                         CurrentPosition.translation_type = "Global";
+                        CurrentPosition.frame_number = FrameNumber.FrameNumber;
                         msg = "Publishing segment " + SegmentName + " from subject " + SubjectName + " with translation type global";
                         Log(msg, INFO);
                         pub->PublishPosition(CurrentPosition);
                     }
+
+                    else
+                    {
+                        Log("Unfit segment, skipping...", WARNING);
+                    }
+                    
                 }
             }
         }
@@ -308,6 +329,18 @@ void Communicator::FrameGetter()
 bool Communicator::IsConnected() const
 {
     return MyClient.IsConnected().Connected;
+}
+
+bool Communicator::IsSegmentValid(string test_segment) const 
+{
+    for (string segment : segments)
+    {
+        if (ci_find_substr(test_segment, segment))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 string Communicator::GetHostName() const

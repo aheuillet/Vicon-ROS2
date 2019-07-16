@@ -20,7 +20,7 @@ Then, install [Colcon](https://colcon.readthedocs.io/en/released/index.html) and
 
 You will also need to install wxWidgets in order to build the GUI :
 
-`sudo apt install wx-common wx-headers libwxgtk3.0-dev libwxgtk-media3.0-dev libwxgtk3.0-gtk3-dev libcanberra-gtk-module libcanberra-gtk3-module`
+`sudo apt install wx-common wx3.0-headers libwxgtk3.0-dev libwxgtk-media3.0-dev libwxgtk3.0-gtk3-dev libcanberra-gtk-module libcanberra-gtk3-module`
 
 And :
 

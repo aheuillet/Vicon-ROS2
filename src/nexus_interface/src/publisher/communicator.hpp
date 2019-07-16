@@ -1,7 +1,7 @@
 #if !defined(COMMUNICATOR_HPP)
 #define COMMUNICATOR_HPP
 
-#include "../../DataStreamSDK/DataStreamClient.h"
+#include "../../../DataStreamSDK/DataStreamClient.h"
 #include "logging.hpp"
 #include "utils.hpp"
 #include "publisher.hpp"
@@ -21,7 +21,7 @@ private:
     unsigned int buffer_size;
     unsigned int target_subject_index;
     string topic_name;
-    string segments;
+    list<string> segments;
     list<Position> Positions;
     Position CurrentPosition;
     Publisher *pub;
@@ -36,6 +36,7 @@ public:
     bool Connect();
     bool Disconnect();
     bool IsConnected() const;
+    bool IsSegmentValid(string test_segment) const;
     void FrameGetter();
     string GetHostName() const;
     ~Communicator();

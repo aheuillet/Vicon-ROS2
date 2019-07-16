@@ -37,7 +37,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 ament_export_dependencies(rosidl_default_runtime)
 
 include(${wxWidgets_USE_FILE})
-add_executable(client src/gui.cpp src/communicator.cpp src/utils.cpp src/publisher.cpp)
+add_executable(client src/publisher/gui.cpp src/publisher/communicator.cpp src/publisher/utils.cpp src/publisher/publisher.cpp)
 target_link_libraries(client ViconDataStreamSDK_CPP)
 target_link_libraries(client ${wxWidgets_LIBRARIES})
 

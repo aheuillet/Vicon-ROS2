@@ -13,6 +13,7 @@ void Publisher::PublishPosition(Position p)
     msg->z = p.translation[2];
     msg->subject_name = p.subject_name;
     msg->segment_name = p.segment_name;
+    msg->frame_number = p.frame_number;
     msg->translation_type = p.translation_type;
     position_publisher_->publish(*msg);
 }
