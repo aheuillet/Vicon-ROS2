@@ -18,9 +18,13 @@ class Listener(Node):
         
 
     def chatter_callback(self, msg):
-        document = { "x" : msg.x,
-                     "y" : msg.y,
-                     "z" : msg.z,
+        document = { "x_trans" : msg.x_trans,
+                     "y_trans" : msg.y_trans,
+                     "z_trans" : msg.z_trans,
+                     "x_rot" : msg.x_rot,
+                     "y_rot" : msg.y_rot,
+                     "z_rot" : msg.z_rot,
+                     "w" : msg.w,
                      "frame_number" : msg.frame_number,
                      "segment_name" : msg.segment_name,
                      "translation_type" : msg.translation_type}

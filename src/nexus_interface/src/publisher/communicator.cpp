@@ -207,8 +207,8 @@ bool Communicator::Connect()
     Log("Setting Stream mode to ClientPull", INFO);
 
     MyClient.SetAxisMapping(Direction::Forward,
-                            Direction::Left,
-                            Direction::Up); //TODO: Z-up by default but to be included in settings
+                            Direction::Up,
+                            Direction::Left); //TODO: Y-up by default but to be included in settings
     Log("Setting up Axis", INFO);
 
     Output_GetAxisMapping _Output_GetAxisMapping = MyClient.GetAxisMapping();
@@ -300,19 +300,24 @@ void Communicator::FrameGetter()
 
                     if (IsSegmentValid(SegmentName)) 
                     {
-                        Output_GetSegmentGlobalTranslation _Output_GetSegmentGlobalTranslation =
-                        MyClient.GetSegmentGlobalTranslation(SubjectName, SegmentName);
-                        for (size_t i = 0; i < POSITION_NUMBER; i++)
+                        Output_GetSegmentLocalTranslation _Output_GetSegmentLocalTranslation =
+                        MyClient.GetSegmentLocalTranslation(SubjectName, SegmentName);
+                        Output_GetSegmentLocalRotationQuaternion _Output_GetSegmentLocalRotationQuaternion = 
+                        MyClient.GetSegmentLocalRotationQuaternion(SubjectName, SegmentName);
+                        for (size_t i = 0; i < 4; i++)
                         {
-                            CurrentPosition.translation[i] = _Output_GetSegmentGlobalTranslation.Translation[i];
+                            if (i < 3)
+                                CurrentPosition.translation[i] = _Output_GetSegmentLocalTranslation.Translation[i];
+                            CurrentPosition.rotation[i] = _Output_GetSegmentLocalRotationQuaternion.Rotation[i];
                         }
                         CurrentPosition.segment_name = SegmentName;
                         CurrentPosition.subject_name = SubjectName;
-                        CurrentPosition.translation_type = "Global";
+                        CurrentPosition.translation_type = "Local";
                         CurrentPosition.frame_number = FrameNumber.FrameNumber;
-                        msg = "Publishing segment " + SegmentName + " from subject " + SubjectName + " with translation type global";
+                        msg = "Publishing segment " + SegmentName + " from subject " + SubjectName + " with translation type Local";
                         Log(msg, INFO);
                         pub->PublishPosition(CurrentPosition);
+
                     }
 
                     else

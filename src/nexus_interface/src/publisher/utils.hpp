@@ -14,6 +14,7 @@
 struct Position
 {
     double translation[3];
+    double rotation[3];
     std::string subject_name;
     std::string segment_name;
     std::string translation_type;
