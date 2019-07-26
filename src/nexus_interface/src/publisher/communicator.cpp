@@ -291,6 +291,13 @@ void Communicator::FrameGetter()
                 // Count the number of segments
                 unsigned int SegmentCount = MyClient.GetSegmentCount(SubjectName).SegmentCount;
 
+                // Get the subject root segment
+                string RootSegmentName = MyClient.GetSubjectRootSegmentName(SubjectName).SegmentName;
+                CurrentRootSegment.name = RootSegmentName;
+                CurrentRootSegment.subject_name = SubjectName;
+                msg = "Subject root segment is : " + RootSegmentName;
+                Log(msg, INFO);
+
                 for (unsigned int SegmentIndex = 0; SegmentIndex < SegmentCount; ++SegmentIndex)
                 {
                     // Get the segment name
@@ -316,8 +323,8 @@ void Communicator::FrameGetter()
                         CurrentPosition.frame_number = FrameNumber.FrameNumber;
                         msg = "Publishing segment " + SegmentName + " from subject " + SubjectName + " with translation type Local";
                         Log(msg, INFO);
+                        pub->PublishRootSegment(CurrentRootSegment);
                         pub->PublishPosition(CurrentPosition);
-
                     }
 
                     else

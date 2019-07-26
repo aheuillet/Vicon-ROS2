@@ -24,6 +24,7 @@ private:
     list<string> segments;
     list<Position> Positions;
     Position CurrentPosition;
+    RootSegment CurrentRootSegment;
     Publisher *pub;
     bool running = false;
     string Adapt(const bool i_Value) const;

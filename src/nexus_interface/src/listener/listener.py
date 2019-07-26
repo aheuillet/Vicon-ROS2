@@ -2,7 +2,7 @@ import pymongo
 import datetime
 import rclpy
 from rclpy.node import Node
-from nexus_interface.msg import Position
+from nexus_interface.msg import Position, RootSegment
 
 
 class Listener(Node):
@@ -12,12 +12,14 @@ class Listener(Node):
         self.client = pymongo.MongoClient('localhost', 27017)
         self.db = self.client.vicon
         self.collection = self.db.translations
-        self.sub = self.create_subscription(
-            Position, 'vicon', self.chatter_callback, 10)
+        self.sub_pos = self.create_subscription(
+            Position, 'vicon', self.pos_callback, 10)
+        self.sub_root = self.create_subscription(
+            RootSegment, 'vicon', self.root_callback, 10)
         self.date = datetime.datetime.utcnow()
         
 
-    def chatter_callback(self, msg):
+    def pos_callback(self, msg):
         document = { "x_trans" : msg.x_trans,
                      "y_trans" : msg.y_trans,
                      "z_trans" : msg.z_trans,
@@ -29,6 +31,12 @@ class Listener(Node):
                      "segment_name" : msg.segment_name,
                      "translation_type" : msg.translation_type}
         self.collection = self.db[msg.subject_name + "_" + str(self.date)]
+        self.collection.insert_one(document)
+
+    def root_callback(self, msg):
+        document = { "root_segment_name": msg.root_segment_name,
+                     "collection_name": msg.subject_name + "_" + str(self.date)}
+        self.collection = "root_segments"
         self.collection.insert_one(document)
 
 def main(args=None):

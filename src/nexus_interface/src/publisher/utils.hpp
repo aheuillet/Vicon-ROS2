@@ -26,6 +26,12 @@ struct Position
     }
 } typedef Position;
 
+struct RootSegment 
+{
+    std::string name;
+    std::string subject_name; 
+} typedef RootSegment;
+
 struct ConfigLine 
 {
     std::string name;

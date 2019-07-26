@@ -27,7 +27,7 @@ find_package(rcutils)
 find_package(wxWidgets REQUIRED COMPONENTS net core base)
 
 set(msg_files
-  "msg/Position.msg"
+  "msg/Position.msg" "msg/RootSegment.msg"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}

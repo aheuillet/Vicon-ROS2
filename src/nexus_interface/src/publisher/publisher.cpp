@@ -3,6 +3,7 @@
 Publisher::Publisher(std::string topic_name): Node("vicon_publisher")
 {
     position_publisher_ = this->create_publisher<nexus_interface::msg::Position>(topic_name, 10);
+    root_segment_publisher_ = this->create_publisher<nexus_interface::msg::RootSegment>(topic_name, 10);
 }
 
 void Publisher::PublishPosition(Position p) 
@@ -22,15 +23,14 @@ void Publisher::PublishPosition(Position p)
     position_publisher_->publish(*msg);
 }
 
+void Publisher::PublishRootSegment(RootSegment r) 
+{
+    auto msg = std::make_shared<nexus_interface::msg::RootSegment>();
+    msg->name = r.name;
+    msg->subject_name = r.subject_name;
+}
+
 Publisher::~Publisher()
 {   
 }
 
-/* int main(int argc, char const *argv[])
-{
-    rclcpp::init(argc, argv);
-    Publisher pub("toto");
-    sleep(10); 
-    return 0;
-}
- */
