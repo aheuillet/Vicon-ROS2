@@ -7,5 +7,5 @@ float32 z_rot
 float32 w
 string segment_name
 string subject_name
-int64 frame_number
+int32 frame_number
 string translation_type

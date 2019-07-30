@@ -131,8 +131,8 @@ PrefPagePanel::PrefPagePanel(wxWindow *parent) : wxPanel(parent)
     {
         if (line.name == "segments")
         {
-            wxString body_parts[] = {"Hand", "Foot", "Wrist", "Elbow", "Femur", "Tibia", "Collar", "Head"};
-            wxCheckListBox *segments = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 8, body_parts);
+            wxString body_parts[] = {"Hand", "Foot", "Wrist", "Elbow", "Femur", "Tibia", "Collar", "Humerus", "Wrist", "Toe", "Head"};
+            wxCheckListBox *segments = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, BODY_PARTS_NUMBER, body_parts);
             wxStaticText *label = new wxStaticText(this, wxID_ANY, (line.name + ":").c_str());
 
             sizer->Add(label, wxSizerFlags().Border());

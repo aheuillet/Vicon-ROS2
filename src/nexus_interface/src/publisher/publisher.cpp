@@ -28,6 +28,7 @@ void Publisher::PublishRootSegment(RootSegment r)
     auto msg = std::make_shared<nexus_interface::msg::RootSegment>();
     msg->name = r.name;
     msg->subject_name = r.subject_name;
+    root_segment_publisher_->publish(*msg);
 }
 
 Publisher::~Publisher()

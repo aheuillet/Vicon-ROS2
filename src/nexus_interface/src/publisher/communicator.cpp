@@ -296,6 +296,7 @@ void Communicator::FrameGetter()
                 CurrentRootSegment.name = RootSegmentName;
                 CurrentRootSegment.subject_name = SubjectName;
                 msg = "Subject root segment is : " + RootSegmentName;
+                pub->PublishRootSegment(CurrentRootSegment);
                 Log(msg, INFO);
 
                 for (unsigned int SegmentIndex = 0; SegmentIndex < SegmentCount; ++SegmentIndex)
@@ -323,7 +324,6 @@ void Communicator::FrameGetter()
                         CurrentPosition.frame_number = FrameNumber.FrameNumber;
                         msg = "Publishing segment " + SegmentName + " from subject " + SubjectName + " with translation type Local";
                         Log(msg, INFO);
-                        pub->PublishRootSegment(CurrentRootSegment);
                         pub->PublishPosition(CurrentPosition);
                     }
 
