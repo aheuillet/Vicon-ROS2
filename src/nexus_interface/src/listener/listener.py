@@ -34,9 +34,9 @@ class Listener(Node):
         self.collection.insert_one(document)
 
     def root_callback(self, msg):
-        document = { "root_segment_name": msg.root_segment_name,
+        document = { "root_segment_name": msg.name,
                      "collection_name": msg.subject_name + "_" + str(self.date)}
-        self.collection = "root_segments"
+        self.collection = self.db["root_segments"]
         self.collection.insert_one(document)
 
 def main(args=None):
