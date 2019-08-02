@@ -16,6 +16,7 @@ public:
     Publisher(std::string topic_name);
     void PublishPosition(Position p);
     void PublishRootSegment(RootSegment r);
+    std::string AdaptSegmentName(std::string s);
     ~Publisher();
 };  
 

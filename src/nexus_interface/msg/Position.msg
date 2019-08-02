@@ -1,6 +1,6 @@
-int16 x_trans
-int16 y_trans
-int16 z_trans
+float32 x_trans
+float32 y_trans
+float32 z_trans
 float32 x_rot
 float32 y_rot
 float32 z_rot
