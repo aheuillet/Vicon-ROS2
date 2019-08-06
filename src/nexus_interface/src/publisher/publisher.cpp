@@ -51,19 +51,19 @@ std::string Publisher::AdaptSegmentName(std::string s)
     }
     else if ((ci_find_substr(s, "l_foot")) || (ci_find_substr(s, "leftfoot")))
     {
-        return std::string("LeftFoot");
+        return std::string("LeftForeFoot");
     }
     else if ((ci_find_substr(s, "r_foot")) || (ci_find_substr(s, "rightfoot")))
     {
-        return std::string("RightFoot");
+        return std::string("RightForeFoot");
     }
     else if ((ci_find_substr(s, "l_toe")) || (ci_find_substr(s, "lefttoebase")))
     {
-        return std::string("LeftToeBase");
+        return std::string("LeftToeBaseEnd");
     }
     else if ((ci_find_substr(s, "r_toe")) || (ci_find_substr(s, "righttoebase")))
     {
-        return std::string("RightToeBase");
+        return std::string("RightToeBaseEnd");
     }
     else if ((ci_find_substr(s, "lowerback")) || (ci_find_substr(s, "spine")))
     {
@@ -77,23 +77,35 @@ std::string Publisher::AdaptSegmentName(std::string s)
     {
         return std::string("RightArm");
     }
-    else if ((ci_find_substr(s, "l_wrist")) || (ci_find_substr(s, "leftforearm")))
+    else if ((ci_find_substr(s, "l_elbow")) || (ci_find_substr(s, "leftforearm")))
     {
         return std::string("LeftForeArm");
     }
-    else if ((ci_find_substr(s, "r_wrist")) || (ci_find_substr(s, "rightforearm")))
+    else if ((ci_find_substr(s, "r_elbow")) || (ci_find_substr(s, "rightforearm")))
     {
         return std::string("RightForeArm");
     }
-    else if ((ci_find_substr(s, "l_hand")) || (ci_find_substr(s, "lefthand")))
+    else if ((ci_find_substr(s, "l_wrist")) || (ci_find_substr(s, "lefthand")))
     {
         return std::string("LeftHand");
     }
-    else if ((ci_find_substr(s, "r_hand")) || (ci_find_substr(s, "righthand")))
+    else if ((ci_find_substr(s, "r_wrist")) || (ci_find_substr(s, "righthand")))
     {
         return std::string("RightHand");
     }
-    else if ((ci_find_substr(s, "head")) || (ci_find_substr(s, "head_end")) || (ci_find_substr(s, "elbow")))
+    else if ((ci_find_substr(s, "l_hand")) || (ci_find_substr(s, "lefthandmiddle1")))
+    {
+        return std::string("LeftHandMiddle1");
+    }
+    else if ((ci_find_substr(s, "r_hand")) || (ci_find_substr(s, "righthandmiddle1")))
+    {
+        return std::string("RightHandMiddle1");
+    }
+    else if (ci_find_substr(s, "head_end")) 
+    {
+        return std::string("HeadEnd");
+    }
+    else if ((ci_find_substr(s, "head")) || (ci_find_substr(s, "collar")) || (ci_find_substr(s, "wrist_end")))
     {
         return s;
     }
