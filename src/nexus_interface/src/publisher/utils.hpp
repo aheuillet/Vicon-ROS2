@@ -9,7 +9,7 @@
 
 #define CONFIG_FILE_LOCATION "./settings.cfg"
 #define POSITION_NUMBER 3
-#define BODY_PARTS_NUMBER 11
+#define BODY_PARTS_NUMBER 10
 
 struct Position
 {

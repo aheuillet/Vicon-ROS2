@@ -164,6 +164,7 @@ void Communicator::GetParams()
         segments_str.erase(0, semicolon + 1);
         semicolon = segments_str.find(";");
     }
+    segments.push_back("Root");
 }
 
 bool Communicator::Connect()
@@ -200,7 +201,7 @@ bool Communicator::Connect()
     MyClient.EnableMarkerRayData();
     MyClient.EnableDeviceData();
     MyClient.EnableDebugData();
-    MyClient.EnableCentroidData();
+    //MyClient.EnableCentroidData();
     Log("Enabling datatypes for transfer", INFO);
 
     MyClient.SetStreamMode(StreamMode::ClientPull);
@@ -208,7 +209,7 @@ bool Communicator::Connect()
 
     MyClient.SetAxisMapping(Direction::Forward,
                             Direction::Up,
-                            Direction::Left); //TODO: Y-up by default but to be included in settings
+                            Direction::Right); //TODO: Y-up by default but to be included in settings
     Log("Setting up Axis", INFO);
 
     Output_GetAxisMapping _Output_GetAxisMapping = MyClient.GetAxisMapping();
