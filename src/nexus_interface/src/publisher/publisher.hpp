@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include "rclcpp/rclcpp.hpp"
 #include "nexus_interface/msg/position.hpp"
-#include "nexus_interface/msg/root_segment.hpp"
 #include "utils.hpp"
 
 /// ROS2 node class that allow segment data to be published in a ROS2 topic.
