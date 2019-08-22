@@ -145,12 +145,12 @@ string Adapt(const Unit::Enum i_Unit)
 
 Communicator::Communicator(/* args */)
 {
-    const char* const* argv = NULL;
+    const char *const *argv = NULL;
     rclcpp::init(0, argv);
     pub = NULL;
 }
 
-void Communicator::GetParams() 
+void Communicator::GetParams()
 {
     hostname = GetParam("hostname");
     buffer_size = stoi(GetParam("buffer_size").c_str());
@@ -201,15 +201,14 @@ bool Communicator::Connect()
     MyClient.EnableMarkerRayData();
     MyClient.EnableDeviceData();
     MyClient.EnableDebugData();
-    //MyClient.EnableCentroidData();
     Log("Enabling datatypes for transfer", INFO);
 
     MyClient.SetStreamMode(StreamMode::ClientPull);
     Log("Setting Stream mode to ClientPull", INFO);
 
-    MyClient.SetAxisMapping(Direction::Forward,
+    /* MyClient.SetAxisMapping(Direction::Forward,
                             Direction::Up,
-                            Direction::Right); //TODO: Y-up by default but to be included in settings
+                            Direction::Right); //TODO: Y-up by default but to be included in settings */
     Log("Setting up Axis", INFO);
 
     Output_GetAxisMapping _Output_GetAxisMapping = MyClient.GetAxisMapping();
@@ -279,11 +278,11 @@ void Communicator::FrameGetter()
         unsigned int SubjectCount = MyClient.GetSubjectCount().SubjectCount;
         msg = SubjectCount + " subject(s) detected";
         Log(msg, INFO);
-        
+
         for (unsigned int SubjectIndex = 0; SubjectIndex < SubjectCount; ++SubjectIndex)
         {
-            if (SubjectIndex == target_subject_index) 
-            {  
+            if (SubjectIndex == target_subject_index)
+            {
                 // Get the subject name
                 string SubjectName = MyClient.GetSubjectName(SubjectIndex).SubjectName;
                 msg = "Subject " + to_string(SubjectIndex) + " is: " + SubjectName;
@@ -292,14 +291,6 @@ void Communicator::FrameGetter()
                 // Count the number of segments
                 unsigned int SegmentCount = MyClient.GetSegmentCount(SubjectName).SegmentCount;
 
-                // Get the subject root segment
-                string RootSegmentName = MyClient.GetSubjectRootSegmentName(SubjectName).SegmentName;
-                CurrentRootSegment.name = RootSegmentName;
-                CurrentRootSegment.subject_name = SubjectName;
-                msg = "Subject root segment is : " + RootSegmentName;
-                pub->PublishRootSegment(CurrentRootSegment);
-                Log(msg, INFO);
-
                 for (unsigned int SegmentIndex = 0; SegmentIndex < SegmentCount; ++SegmentIndex)
                 {
                     // Get the segment name
@@ -307,12 +298,12 @@ void Communicator::FrameGetter()
                     msg = "Found segment: " + SegmentName;
                     Log(msg, INFO);
 
-                    if (IsSegmentValid(SegmentName)) 
+                    if (IsSegmentValid(SegmentName))
                     {
                         Output_GetSegmentLocalTranslation _Output_GetSegmentLocalTranslation =
-                        MyClient.GetSegmentLocalTranslation(SubjectName, SegmentName);
-                        Output_GetSegmentLocalRotationQuaternion _Output_GetSegmentLocalRotationQuaternion = 
-                        MyClient.GetSegmentLocalRotationQuaternion(SubjectName, SegmentName);
+                            MyClient.GetSegmentLocalTranslation(SubjectName, SegmentName);
+                        Output_GetSegmentLocalRotationQuaternion _Output_GetSegmentLocalRotationQuaternion =
+                            MyClient.GetSegmentLocalRotationQuaternion(SubjectName, SegmentName);
                         for (size_t i = 0; i < 4; i++)
                         {
                             if (i < 3)
@@ -332,7 +323,6 @@ void Communicator::FrameGetter()
                     {
                         Log("Unfit segment, skipping...", WARNING);
                     }
-                    
                 }
             }
         }
@@ -344,7 +334,7 @@ bool Communicator::IsConnected() const
     return MyClient.IsConnected().Connected;
 }
 
-bool Communicator::IsSegmentValid(string test_segment) const 
+bool Communicator::IsSegmentValid(string test_segment) const
 {
     for (string segment : segments)
     {

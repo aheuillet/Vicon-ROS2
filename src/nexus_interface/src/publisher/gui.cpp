@@ -2,14 +2,14 @@
 
 wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(ID_Start, MyFrame::OnStart)
-    EVT_BUTTON(BUTTON_Start, MyFrame::OnStart)
-    EVT_BUTTON(BUTTON_Stop, MyFrame::OnStop)
-    EVT_MENU(wxID_PREFERENCES, MyFrame::OnSettings)
-    EVT_MENU(wxID_EXIT, MyFrame::OnExit)
-    EVT_MENU(wxID_ABOUT, MyFrame::OnAbout)
-wxEND_EVENT_TABLE()
+        EVT_BUTTON(BUTTON_Start, MyFrame::OnStart)
+            EVT_BUTTON(BUTTON_Stop, MyFrame::OnStop)
+                EVT_MENU(wxID_PREFERENCES, MyFrame::OnSettings)
+                    EVT_MENU(wxID_EXIT, MyFrame::OnExit)
+                        EVT_MENU(wxID_ABOUT, MyFrame::OnAbout)
+                            wxEND_EVENT_TABLE()
 
-wxIMPLEMENT_APP(MyApp);
+                                wxIMPLEMENT_APP(MyApp);
 
 bool MyApp::OnInit()
 {
@@ -20,7 +20,7 @@ bool MyApp::OnInit()
     return true;
 }
 
-MyApp::~MyApp() 
+MyApp::~MyApp()
 {
     wxDELETE(frame);
 }
@@ -107,7 +107,7 @@ void MyFrame::OnSettings(wxCommandEvent &event)
     editor->Show(this);
 }
 
-MyFrame::~MyFrame() 
+MyFrame::~MyFrame()
 {
     wxDELETE(buttonsSizer);
     wxDELETE(editor);
@@ -189,5 +189,6 @@ void PrefPagePanel::UpdateSettings() const
     WriteConfigLines(current_config);
 }
 
-PrefPagePanel::~PrefPagePanel() 
-{}
+PrefPagePanel::~PrefPagePanel()
+{
+}

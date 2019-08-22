@@ -45,3 +45,12 @@ Once it is finished, you have to source the current workspace so that ROS2 will 
 Finally, you can run the program using the following command :
 
 `ros2 run nexus_package client`
+
+Change the parameters in *Command->Settings* to your convenience and then press *Start* to connect to the DataStream server and start transmitting.
+
+## Listeners
+
+Two listeners have been implemented in Python 3 using rclpy.
+The first one uses MongoDB (recommended) and the second one uses MySQL.
+
+To launch a listener, just use `python3 src/nexus_interface/src/listener/listener_XXX.py` (replace `XXX` by either `MongoDB` or `MySQL`).

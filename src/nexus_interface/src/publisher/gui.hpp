@@ -1,3 +1,7 @@
+///////////////////////////////////////////////////////////////////////////////////////////////
+/// This file holds all GUI related classes and functions.
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 #ifndef GUI_HPP
 #define GUI_HPP
 
@@ -25,9 +29,14 @@
 #include "communicator.hpp"
 #include <thread>
 
+/// This class holds the GUI main window and most of the logic behind.
 class MyFrame : public wxFrame
 {
 public:
+    /// Main window constructor.
+    /// title: window title.
+    /// pos: window position in pixels (on the screen).
+    /// size: window size in pixels.
     MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size);
     ~MyFrame();
 
@@ -41,23 +50,37 @@ private:
     wxButton *start_button;
     wxButton *stop_button;
     wxPreferencesEditor *editor;
+
+    /// Defines the app's behaviour when the 'Start button clicked' event is fired.
     void OnStart(wxCommandEvent &event);
+
+    /// Defines the app's behaviour when the 'Stop button clicked' event is fired.
     void OnStop(wxCommandEvent &event);
+
+    /// Defines the app's behaviour when the 'Exit button clicked' event is fired.
     void OnExit(wxCommandEvent &event);
+
+    /// Defines the app's behaviour when the 'About button clicked' event is fired.
     void OnAbout(wxCommandEvent &event);
+
+    /// Defines the app's behaviour when the 'Settings button clicked' event is fired.
     void OnSettings(wxCommandEvent &event);
+
     wxDECLARE_EVENT_TABLE();
 };
 
+/// Main container class for the app's GUI. Holds the main frame.
 class MyApp : public wxApp
 {
 public:
     virtual bool OnInit();
     ~MyApp();
+
 private:
-    MyFrame * frame;
+    MyFrame *frame;
 };
 
+/// Holds the graphical settings editor panel and its logic.
 class PrefPagePanel : public wxPanel
 {
 public:
@@ -65,10 +88,15 @@ public:
     ~PrefPagePanel();
 
 private:
+    /// Reads the values entered by the user in the GUI and writes them in the config file.
     void UpdateSettings() const;
+
+    /// List holding the config values read from user input.
     list<ConfigLine> current_config;
 };
 
+/// Holds the graphical settings editor window. To be used in conjunction
+/// with PrefPagePanel class.
 class PrefPage : public wxStockPreferencesPage
 {
 public:
@@ -76,6 +104,7 @@ public:
     virtual wxWindow *CreateWindow(wxWindow *parent);
 };
 
+/// Represents the ids corresponding to GUI buttons (in order to associate them with actions).
 enum
 {
     ID_Start = 1,

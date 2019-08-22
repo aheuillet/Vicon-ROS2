@@ -526,6 +526,14 @@ namespace Result
     String       SegmentName;
   };
 
+  class Output_GetSegmentStaticScale 
+  {
+    public:
+      Result::Enum Result;
+      double       Scale[3];
+
+  };
+
   class Output_GetSegmentStaticTranslation
   {
   public:

@@ -4,21 +4,20 @@ import rclpy
 from rclpy.node import Node
 from nexus_interface.msg import Position, RootSegment
 
-
+### This class is a ROS2 listener node that listens on a given topic and stores the received segment data inside a MongoDB database.
+# A MySQL/MariaDB version is also available. 
 class Listener(Node):
 
-    def __init__(self):
+    def __init__(self, host, port, topic):
         super().__init__('listener')
-        self.client = pymongo.MongoClient('localhost', 27017)
+        self.client = pymongo.MongoClient(host, port)
         self.db = self.client.vicon
         self.collection = self.db.translations
         self.sub_pos = self.create_subscription(
-            Position, 'vicon', self.pos_callback, 10)
-        self.sub_root = self.create_subscription(
-            RootSegment, 'vicon', self.root_callback, 10)
+            Position, topic, self.pos_callback, 10)
         self.date = datetime.datetime.utcnow()
         
-
+    ### Callback which is called each time a new message is received.
     def pos_callback(self, msg):
         document = { "x_trans" : msg.x_trans,
                      "y_trans" : msg.y_trans,
@@ -33,16 +32,10 @@ class Listener(Node):
         self.collection = self.db[msg.subject_name + "_" + str(self.date)]
         self.collection.insert_one(document)
 
-    def root_callback(self, msg):
-        document = { "root_segment_name": msg.name,
-                     "collection_name": msg.subject_name + "_" + str(self.date)}
-        self.collection = self.db["root_segments"]
-        self.collection.insert_one(document)
-
 def main(args=None):
     rclpy.init(args=args)
 
-    node = Listener()
+    node = Listener("localhost", 27017, "vicon")
     rclpy.spin(node)
 
     node.destroy_node()

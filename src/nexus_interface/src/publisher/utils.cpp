@@ -56,14 +56,14 @@ string GetParam(string identifier)
     return string("");
 }
 
-void WriteConfigLines(list<ConfigLine> lines) 
+void WriteConfigLines(list<ConfigLine> lines)
 {
     ofstream cFile(CONFIG_FILE_LOCATION);
     string line;
-    if (cFile.is_open()) 
+    if (cFile.is_open())
     {
         Log("Writing new configuration...", INFO);
-        for (ConfigLine & line : lines) 
+        for (ConfigLine &line : lines)
         {
             cFile << line.name + "=" + line.value << endl;
         }
@@ -78,7 +78,6 @@ void WriteConfigLines(list<ConfigLine> lines)
     cFile.close();
 }
 
-// find substring (case insensitive)
 bool ci_find_substr(std::string str1, std::string str2)
 {
     std::transform(str1.begin(), str1.end(), str1.begin(), ::tolower);
