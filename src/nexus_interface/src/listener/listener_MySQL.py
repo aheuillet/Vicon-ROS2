@@ -2,7 +2,7 @@ import mysql.connector
 import datetime
 import rclpy
 from rclpy.node import Node
-from nexus_interface.msg import Position, RootSegment
+from nexus_interface.msg import Position
 
 
 class Listener(Node):

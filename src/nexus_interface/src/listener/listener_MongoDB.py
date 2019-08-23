@@ -2,7 +2,7 @@ import pymongo
 import datetime
 import rclpy
 from rclpy.node import Node
-from nexus_interface.msg import Position, RootSegment
+from nexus_interface.msg import Position
 
 ### This class is a ROS2 listener node that listens on a given topic and stores the received segment data inside a MongoDB database.
 # A MySQL/MariaDB version is also available. 
